@@ -19,6 +19,10 @@
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
+
+void AddMicroLFGScripts();
+
 void AddCustomScripts()
 {
+    AddMicroLFGScripts();
 }
