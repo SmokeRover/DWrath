@@ -4090,22 +4090,23 @@ Metric.OverallStatusInterval = 1
 #
 ###################################################################################################
 
+
 ###################################################################################################
-# SOLO LFG
+# MICRO LFG
 #
-#    SoloLFG.Enable
+#    MicroLFG.Enable
 #        Description: Enable the module.
 #        Default:     1  - (Enabled)
 #                     0  - (Disabled)
 
-SoloLFG.Enable = 1
+MicroLFG.Enable = 1
 
-#    SoloLFG.Announce
+#    MicroLFG.Announce
 #        Description: Announce the module.
 #        Default:     1  - (Enabled)
 #                     0  - (Disabled)
 
-SoloLFG.Announce = 1
+MicroLFG.Announce = 1
 
 #
 ###################################################################################################

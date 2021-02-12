@@ -16,12 +16,10 @@
  */
 
 // This is where scripts' loading functions should be declared:
+void AddMicroLFGScripts();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
-
-void AddMicroLFGScripts();
-
 void AddCustomScripts()
 {
     AddMicroLFGScripts();
