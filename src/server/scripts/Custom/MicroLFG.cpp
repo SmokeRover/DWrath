@@ -27,7 +27,7 @@ public:
         // Announce Module
         if (sConfigMgr->GetBoolDefault("MicroLFG.Announce", true))
         {
-            ChatHandler(player->GetSession()).SendSysMessage("This server is running |cff4CFF00Solo MicroLFG |r.");
+            ChatHandler(player->GetSession()).SendSysMessage("|cff4CFF00MicroLFG |r is running.");
          }
     }
 };
