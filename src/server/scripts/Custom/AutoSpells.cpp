@@ -16,7 +16,7 @@ Also cut the auto-appending code from the original script for azerothcore
 #include "Configuration/Config.h"
 
 #include "SpellMgr.h"
-#include <DataStores\DBCStores.cpp>
+#include "DBCStores.h"
 
 uint32 MaxLevel;
 
