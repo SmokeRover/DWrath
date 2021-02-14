@@ -24,7 +24,7 @@ Which is a fork of https://github.com/conan513/mod-solocraft
 Refactored to Trinitycore Custom 335
 and improved upon by Single Player Project Developer MDic
 */
-#include <map>
+/*#include <map>
 #include "Config.h"
 #include "DatabaseEnv.h"
 #include "ScriptMgr.h"
@@ -39,6 +39,8 @@ and improved upon by Single Player Project Developer MDic
 #include <math.h>
 #include <unordered_map>
 
+*/
+/*
 bool SoloCraftEnable = 1;
 bool SoloCraftAnnounceModule = 1;
 bool SoloCraftDebuffEnable = 1;
@@ -55,7 +57,8 @@ float D25 = 1.0;
 float D40 = 1.0;
 float D649H10 = 1.0;
 float D649H25 = 1.0;
-
+*/
+/*
 class SolocraftConfig : public WorldScript
 {
 public:
@@ -293,9 +296,11 @@ class SolocraftAnnounce : public PlayerScript
 {
 public:
     SolocraftAnnounce() : PlayerScript("SolocraftAnnounce") {}
-    void OnLogin(Player* Player, bool /*firstLogin*/) override
-    {
+    void OnLogin(Player* Player, bool /*firstLogin*///) override
+    //{
         // Announce Module
+
+        /*
         if (SoloCraftEnable)
         {
             if (SoloCraftAnnounceModule)
@@ -321,8 +326,8 @@ public:
 private:
     std::map<uint32, float> _unitDifficulty;
     // Set the instance difficulty
-    int CalculateDifficulty(Map* map, Player* /*player*/)
-    {
+    int CalculateDifficulty(Map* map, Player* /*player*/        //)
+/*    {
         //float difficulty = 0.0;//changed from 1.0
         if (map)
         {
@@ -365,7 +370,8 @@ private:
         return 0; //return 0
     }
     // Set the Dungeon Level
-    int CalculateDungeonLevel(Map* map, Player* /*player*/) {
+    int CalculateDungeonLevel(Map* map, Player* /*player*/      //) {
+    /*
         if (dungeons.find(map->GetId()) == dungeons.end())
         {
             //return dungeons[map->GetId()];
@@ -523,3 +529,4 @@ void AddSolocraftScripts()
     new SolocraftAnnounce();
     new solocraft_player_instance_handler();
 }
+*/
