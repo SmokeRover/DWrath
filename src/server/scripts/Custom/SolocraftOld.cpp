@@ -102,20 +102,6 @@ class solocraft_player_instance_handler : public PlayerScript {
             return difficulty;
         }
 
-        /*
-        //DungeonLevel from new solocraft, reckon is probably where shit broke.
-        int CalculateDungeonLevel(Map* map, Player* ///*player)
-        {
-            if (dungeons.find(map->GetId()) == dungeons.end())
-            {
-                return SolocraftDungeonLevel;
-            }
-            else
-            {
-                return dungeons[map->GetId()];
-            }
-        }*/
-
         int GetNumInGroup(Player* player) {
             int numInGroup = 1;
             Group* group = player->GetGroup();
@@ -187,31 +173,6 @@ class solocraft_player_instance_handler : public PlayerScript {
             {
                 ClearBuffs(player, map);//Clears buffs
             }
-
-            //OLD SOLOCRAFT DIFFICULTY SCRIPT
-            /*if (difficulty > 1) {
-                //InstanceMap *instanceMap = map->ToInstanceMap();
-                //InstanceScript *instanceScript = instanceMap->GetInstanceScript();
-
-                //BARNARD EDIT Following if statement for formchanges added
-                uint32 pFormCheck = FORM_NONE;
-                if (pFormCheck != pFormCheck) {
-                    ChatHandler(player->GetSession()).PSendSysMessage("DEBUG: Form changed on %s (difficulty = %d, numInGroup = %d)",
-                        map->GetMapName(), difficulty, numInGroup);
-                }
-
-                ChatHandler(player->GetSession()).PSendSysMessage("Entered %s (difficulty = %d, numInGroup = %d)",
-                    map->GetMapName(), difficulty, numInGroup);
-
-                _unitDifficulty[player->GetGUID()] = difficulty;
-                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {                                              //Default 100
-                    player->ApplyStatPctModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, float(difficulty * 175));
-                }
-                player->SetFullHealth();
-                if (player->GetPowerType() == POWER_MANA) {
-                    player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-                }
-            }*/
         }
 
         float GetGroupDifficulty(Player* player)
@@ -266,21 +227,6 @@ class solocraft_player_instance_handler : public PlayerScript {
                 //Remove database entry as the player is no longer in an instance
                 CharacterDatabase.PExecute("DELETE FROM custom_solocraft_character_stats WHERE GUID = %u", player->GetGUID());
             }
-
-            //OLD SOLOCRAFT CLEAR BUFFS
-            /*std::map<ObjectGuid, int>::iterator unitDifficultyIterator = _unitDifficulty.find(player->GetGUID());
-            //Was if now while
-            if (unitDifficultyIterator != _unitDifficulty.end()) {
-                int difficulty = unitDifficultyIterator->second;
-                _unitDifficulty.erase(unitDifficultyIterator);
-
-                ChatHandler(player->GetSession()).PSendSysMessage("Left to %s (removing difficulty = %d)",
-                    map->GetMapName(), difficulty);
-
-                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i) {
-                    player->ApplyStatPctModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_PCT, 100.f / (1.f + float(difficulty * 175) / 100.f) - 100.f);
-                }
-            }*/
         }
 };
 
