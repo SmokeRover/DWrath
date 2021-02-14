@@ -25,7 +25,7 @@ namespace {
             TC_LOG_INFO("scripts.solocraft.player.instance", "[Solocraft] solocraft_player_instance_handler Loaded");
         }
 
-        void OnLogin(Player* player, bool firstLogin) override {
+        void OnLogin(Player* player, bool /*firstlogin*/) override {
             ChatHandler(player->GetSession()).SendSysMessage("Using Solocraft");
         }
 
