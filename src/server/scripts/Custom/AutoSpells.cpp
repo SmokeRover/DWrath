@@ -273,7 +273,7 @@ private:
                 }
 
                 if (valid)
-                    player->LearnSpell(spellInfo->Id,true,0);
+                    player->LearnSpell(spellInfo->Id,false, 0);
             }
         }
     }
@@ -292,7 +292,7 @@ private:
                 {
                     if (!(player->HasSpell(spell.spellId)) && (spell.faction == TeamId::TEAM_NEUTRAL || spell.faction == player->GetTeamId()))
                     {
-                        player->LearnSpell(spell.spellId,true, 0);
+                        player->LearnSpell(spell.spellId,false, 0);
                     }
                 }
             }
@@ -330,7 +330,6 @@ private:
 };
 
 
-//CHANGE THIS SO IT GETS VALUES FROM THE CONFIG FILE
 class LearnAllSpellsWorld : public WorldScript
 {
 public:

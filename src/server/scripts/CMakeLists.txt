@@ -206,7 +206,7 @@ ConfigureScriptLoader("static" SCRIPT_MODULE_PRIVATE_SCRIPTLOADER OFF ${STATIC_S
 add_library(scripts STATIC
   ScriptLoader.h
   ${SCRIPT_MODULE_PRIVATE_SCRIPTLOADER}
-  ${PRIVATE_SOURCES} "Custom/AutoSpells.cpp")
+  ${PRIVATE_SOURCES} "Custom/AutoSpells.cpp" "Custom/SolocraftOld.cpp")
 
 target_link_libraries(scripts
   PRIVATE

@@ -18,6 +18,8 @@
 // This is where scripts' loading functions should be declared:
 void AddMicroLFGScripts();
 void AddAutoSpellsScripts();
+//void AddSolocraftScripts(); //New TrinitycoreChanges Solocraft not working correctly
+void AddSC_solocraft(); //Old Solocraft for testing
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -25,4 +27,6 @@ void AddCustomScripts()
 {
     AddMicroLFGScripts();
     AddAutoSpellsScripts();
+    //AddSolocraftScripts();
+    AddSC_solocraft();
 }
