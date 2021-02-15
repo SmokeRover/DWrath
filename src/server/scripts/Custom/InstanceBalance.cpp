@@ -16,8 +16,24 @@ bool SoloCraftEnable = 1;
 bool SoloCraftAnnounceModule = 1;
 bool SoloCraftDebuffEnable = 1;
 float SolocraftStatMultiplier = 100.0;
+int D5MAN = 5;
+int D10MAN = 10;
+int D25MAN = 25;
+int D40MAN = 40;
 int D649H10 = 10;
 int D649H25 = 25;
+
+//@todo Check all instances recieve buffs.
+
+// Adjust modifiers for good balance, currently way too easy. Magic nerds insta-kill mobs in an instance of their own level when solo
+
+// Make base instance modifiers available in the config
+
+// Druid form changes dont recieve buffs. EG, Bear form at lvl 15 in solo instance only applies ~100 stamina
+// Need to grab form changes, get the stat boost, modify those stats, apply them to current buffs.
+// Have modified form stats saved in database, remove and reset those stats on form change, apply new stats if form changed in instace
+// EG, Bear form to Cat directly, have bear stats removed in game, cleared from database, modify cat stats, apply to player and database
+// Have those stats change when players join and leave the instance, correctly scales with players in instace.
 
 class SolocraftConfig : public WorldScript
 {
@@ -55,10 +71,7 @@ class solocraft_player_instance_handler : public PlayerScript {
         void OnMapChanged(Player* player) override {
             if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true))
             {
-                // NEED TO FIX THIS SO THE SCRIPT ONLY EXECUTES IN DUNGEONS/RAIDS
-                // CURRENTLY EXECUTES ON ALL MAPS AND KEEPS STACKING STAT BUFFS
                 Map* map = player->GetMap();
-                // if (map ==)
                 int difficulty = CalculateDifficulty(map, player);
                 //int dunLevel = CalculateDungeonLevel(map, player);
                 int numInGroup = GetNumInGroup(player);
@@ -68,44 +81,50 @@ class solocraft_player_instance_handler : public PlayerScript {
 
     private:
         std::map<ObjectGuid, int> _unitDifficulty;
-
         int CalculateDifficulty(Map* map, Player* /*player*/) {
             int difficulty = 1;
             if (map) {
-                if (map->Is25ManRaid()) {
+                if (map->Is25ManRaid())
+                {
                     if (map->IsHeroic() && map->GetId() == 649)
                     {
-                        difficulty = D649H25;
+                        return D649H25;
                     }
                     else
                     {
-                        difficulty = 25;
+                        return D5MAN;
                     }
                 }
-                else if (map->IsHeroic()) {
+                else if (map->IsHeroic())
+                {
                     if (map->IsHeroic() && map->GetId() == 649)
                     {
-                        difficulty = D649H10;
+                        return D649H10;
                     }
                     else
                     {
-                        difficulty = 10;
+                        return D10MAN;
                     }
                 }
-                else if (map->IsRaid()) {
-                    difficulty = 40;
+                else if (map->IsRaid())
+                {
+                    return D40MAN;
                 }
-                else if (map->IsDungeon()) {
-                    difficulty = 5;
+                else if (map->IsDungeon())
+                {
+                    return D5MAN;
                 }
+                return 0;
             }
             return difficulty;
         }
 
-        int GetNumInGroup(Player* player) {
+        int GetNumInGroup(Player* player)
+        {
             int numInGroup = 1;
             Group* group = player->GetGroup();
-            if (group) {
+            if (group)
+            {
                 Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
                 numInGroup = groupMembers.size();
             }
@@ -189,9 +208,9 @@ class solocraft_player_instance_handler : public PlayerScript {
                         QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize` FROM `custom_solocraft_character_stats` WHERE GUID = %u", itr->guid);
                         if (result)
                         {
-                            if ((*result)[1].GetFloat() > 0)
+                            if ((*result)[1].GetUInt32() > 0)
                             {
-                                GroupDifficulty = GroupDifficulty + (*result)[1].GetFloat();
+                                GroupDifficulty = GroupDifficulty + (*result)[1].GetUInt32();
                             }
                         }
                     }
@@ -206,13 +225,13 @@ class solocraft_player_instance_handler : public PlayerScript {
             QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = %u", player->GetGUID());
             if (result)
             {
-                float difficulty = (*result)[1].GetFloat();
+                int difficulty = (*result)[1].GetUInt32();
                 int SpellPowerBonus = (*result)[3].GetUInt32();
-                float StatsMultPct = (*result)[4].GetFloat();
+                float StatsMultPct = (*result)[4].GetUInt32();
                 //sLog->outError("Map difficulty: %f", difficulty);
                 // Inform the player
                 std::ostringstream ss;
-                ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %0.2f. Spellpower Bonus Removed: %i";
+                ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %i. Spellpower Bonus Removed: %i";
                 ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus);
                 // Clear the buffs
                 for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)
