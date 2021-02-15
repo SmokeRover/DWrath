@@ -4165,22 +4165,24 @@ SoloCraft.Debuff.Enable = 1
 # Spellpower increase of 300.
 # Default:  2.5
 #           0.0 (Disable)
-SoloCraft.Spellpower.Mult = 2.5
+InstanceBalance.SpellStatMultiplier = 2.0
 # Stats Percentage Bonus Multiplier
 # Forumla: player->Stats * (difficulty * multiplier)
 # Default:  100.0
 #           0.0 (Disable)
-SoloCraft.Stats.Mult = 100.0
+InstanceBalanceStatsMultiplier = 20.0
 #
 ################################################################################################
 #Catch all Bucket - Difficulty Offset Defaults
 ################################################################################################
 # Difficulty Multipliers
 # Defaults: 5, 10, 25, 40
-Solocraft.Dungeon = 5.0
-Solocraft.Heroic = 10.0
-Solocraft.Raid25 = 25.0
-Solocraft.Raid40 = 40.0
+InstanceBalance.5MAN.Dungeon = 5
+InstanceBalance.10MAN.Dungeon = 10
+InstanceBalance.25MAN.Dungeon = 25.0
+InstanceBalance.40MAN.Dungeon = 40.0
+InstanceBalance.D649H10.Dungeon = 10
+InstanceBalance.D649H25.Dungeon = 25
 ################################################################################################
 #Classic Instances - Difficulty
 ################################################################################################
