@@ -12,9 +12,9 @@
 #include "InstanceScript.h"
 #include "Chat.h"
 
-bool SoloCraftEnable = 1;
-bool SoloCraftAnnounceModule = 1;
-bool SoloCraftDebuffEnable = 1;
+bool InstanceBalanceEnable = 1;
+bool InstanceBalanceAnnounceModule = 1;
+bool InstanceBalanceDebuffEnable = 1;
 float StatMultiplier = 20.0;
 float SpellStatMultiplier = 2.0;
 int D5MAN = 5;
@@ -23,6 +23,8 @@ int D25MAN = 25;
 int D40MAN = 40;
 int D649H10 = 10;
 int D649H25 = 25;
+std::unordered_map<uint32, uint32> dungeons;
+int LevelDiff = 10;
 
 //@todo Check all instances recieve buffs.
 
@@ -38,15 +40,15 @@ int D649H25 = 25;
 
 // Never mind the druid crap, im dumb
 
-class SolocraftConfig : public WorldScript
+class InstanceBalanceConfig : public WorldScript
 {
 public:
-    SolocraftConfig() : WorldScript("SolocraftConfig") {
+    InstanceBalanceConfig() : WorldScript("InstanceBalanceConfig") {
         void SetInitialWorldSettings();
         {
-            SoloCraftEnable = sConfigMgr->GetBoolDefault("Solocraft.Enable", 1);
-            SoloCraftAnnounceModule = sConfigMgr->GetBoolDefault("Solocraft.Announce", 1);
-            SoloCraftDebuffEnable = sConfigMgr->GetBoolDefault("Solocraft.Debuff.Enable", 1);
+            InstanceBalanceEnable = sConfigMgr->GetBoolDefault("InstanceBalance.Enable", 1);
+            InstanceBalanceAnnounceModule = sConfigMgr->GetBoolDefault("InstanceBalance.Announce", 1);
+            InstanceBalanceDebuffEnable = sConfigMgr->GetBoolDefault("InstanceBalance.Debuff.Enable", 1);
             StatMultiplier = sConfigMgr->GetFloatDefault("InstanceBalance.StatMultiplier", 20.0f);
             SpellStatMultiplier = sConfigMgr->GetFloatDefault("InstanceBalance.SpellStatMultiplier", 2.0f);
             D5MAN = sConfigMgr->GetIntDefault("InstanceBalance.5MAN.Dungeon", 5);
@@ -55,20 +57,99 @@ public:
             D40MAN = sConfigMgr->GetIntDefault("InstanceBalance.40MAN.Dungeon", 40);
             D649H10 = sConfigMgr->GetIntDefault("InstanceBalance.D649H10.Dungeon", 10);
             D649H25 = sConfigMgr->GetIntDefault("InstanceBalance.D649H25.Dungeon", 25);
-            //@todo Include multipliers, level difference
+
+            dungeons =
+            {
+                // Wow Classic
+                {33, sConfigMgr->GetIntDefault("InstanceBalance.ShadowfangKeep.Level", 15) },
+                {34, sConfigMgr->GetIntDefault("InstanceBalance.Stockades.Level", 22) },
+                {36, sConfigMgr->GetIntDefault("InstanceBalance.Deadmines.Level", 18) },
+                {43, sConfigMgr->GetIntDefault("InstanceBalance.WailingCaverns.Level", 17) },
+                {47, sConfigMgr->GetIntDefault("InstanceBalance.RazorfenKraulInstance.Level", 30) },
+                {48, sConfigMgr->GetIntDefault("InstanceBalance.Blackfathom.Level", 20) },
+                {70, sConfigMgr->GetIntDefault("InstanceBalance.Uldaman.Level", 40) },
+                {90, sConfigMgr->GetIntDefault("InstanceBalance.GnomeragonInstance.Level", 24) },
+                {109, sConfigMgr->GetIntDefault("InstanceBalance.SunkenTemple.Level", 50) },
+                {129, sConfigMgr->GetIntDefault("InstanceBalance.RazorfenDowns.Level", 40) },
+                {189, sConfigMgr->GetIntDefault("InstanceBalance.MonasteryInstances.Level", 35) },                  // Scarlet Monastery
+                {209, sConfigMgr->GetIntDefault("InstanceBalance.TanarisInstance.Level", 44) },                     // Zul'Farrak
+                {229, sConfigMgr->GetIntDefault("InstanceBalance.BlackRockSpire.Level", 55) },
+                {230, sConfigMgr->GetIntDefault("InstanceBalance.BlackrockDepths.Level", 50) },
+                {249, sConfigMgr->GetIntDefault("InstanceBalance.OnyxiaLairInstance.Level", 60) },
+                {289, sConfigMgr->GetIntDefault("InstanceBalance.SchoolofNecromancy.Level", 55) },                  // Scholomance
+                {309, sConfigMgr->GetIntDefault("InstanceBalance.Zul'gurub.Level", 60) },
+                {329, sConfigMgr->GetIntDefault("InstanceBalance.Stratholme.Level", 55) },
+                {349, sConfigMgr->GetIntDefault("InstanceBalance.Mauradon.Level", 48) },
+                {389, sConfigMgr->GetIntDefault("InstanceBalance.OrgrimmarInstance.Level", 15) },                   // Ragefire Chasm
+                {409, sConfigMgr->GetIntDefault("InstanceBalance.MoltenCore.Level", 60) },
+                {429, sConfigMgr->GetIntDefault("InstanceBalance.DireMaul.Level", 48) },
+                {469, sConfigMgr->GetIntDefault("InstanceBalance.BlackwingLair.Level", 40) },
+                {509, sConfigMgr->GetIntDefault("InstanceBalance.AhnQiraj.Level", 60) },                            // Ruins of Ahn'Qiraj
+                {531, sConfigMgr->GetIntDefault("InstanceBalance.AhnQirajTemple.Level", 60) },
+                // BC Instances
+                {269, sConfigMgr->GetIntDefault("InstanceBalance.CavernsOfTime.Level", 68) },                       // The Black Morass
+                {532, sConfigMgr->GetIntDefault("InstanceBalance.Karazahn.Level", 68) },
+                {534, sConfigMgr->GetIntDefault("InstanceBalance.HyjalPast.Level", 70) },                           // The Battle for Mount Hyjal - Hyjal Summit
+                {540, sConfigMgr->GetIntDefault("InstanceBalance.HellfireMilitary.Level", 68) },                    // The Shattered Halls
+                {542, sConfigMgr->GetIntDefault("InstanceBalance.HellfireDemon.Level", 68) },                       // The Blood Furnace
+                {543, sConfigMgr->GetIntDefault("InstanceBalance.HellfireRampart.Level", 68) },
+                {544, sConfigMgr->GetIntDefault("InstanceBalance.HellfireRaid.Level", 68) },                        // Magtheridon's Lair
+                {545, sConfigMgr->GetIntDefault("InstanceBalance.CoilfangPumping.Level", 68) },                     // The Steamvault
+                {546, sConfigMgr->GetIntDefault("InstanceBalance.CoilfangMarsh.Level", 68) },                       // The Underbog
+                {547, sConfigMgr->GetIntDefault("InstanceBalance.CoilfangDraenei.Level", 68) },                     // The Slavepens
+                {548, sConfigMgr->GetIntDefault("InstanceBalance.CoilfangRaid.Level", 70) },                        // Serpentshrine Cavern
+                {550, sConfigMgr->GetIntDefault("InstanceBalance.TempestKeepRaid.Level", 70) },                     // The Eye
+                {552, sConfigMgr->GetIntDefault("InstanceBalance.TempestKeepArcane.Level", 68) },                   // The Arcatraz
+                {553, sConfigMgr->GetIntDefault("InstanceBalance.TempestKeepAtrium.Level", 68) },                   // The Botanica
+                {554, sConfigMgr->GetIntDefault("InstanceBalance.TempestKeepFactory.Level", 68) },                  // The Mechanar
+                {555, sConfigMgr->GetIntDefault("InstanceBalance.AuchindounShadow.Level", 68) },                    // Shadow Labyrinth
+                {556, sConfigMgr->GetIntDefault("InstanceBalance.AuchindounDemon.Level", 68) },                     // Sethekk Halls
+                {557, sConfigMgr->GetIntDefault("InstanceBalance.AuchindounEthereal.Level", 68) },                  // Mana-Tombs
+                {558, sConfigMgr->GetIntDefault("InstanceBalance.AuchindounDraenei.Level", 68) },                   // Auchenai Crypts
+                {560, sConfigMgr->GetIntDefault("InstanceBalance.HillsbradPast.Level", 68) },                       // Old Hillsbrad Foothills
+                {564, sConfigMgr->GetIntDefault("InstanceBalance.BlackTemple.Level", 70) },
+                {565, sConfigMgr->GetIntDefault("InstanceBalance.GruulsLair.Level", 70) },
+                {568, sConfigMgr->GetIntDefault("InstanceBalance.ZulAman.Level", 68) },
+                {580, sConfigMgr->GetIntDefault("InstanceBalance.SunwellPlateau.Level", 70) },
+                {585, sConfigMgr->GetIntDefault("InstanceBalance.Sunwell5ManFix.Level", 68) },                      // Magister's Terrace
+                // WOTLK Instances
+                {533, sConfigMgr->GetIntDefault("InstanceBalance.StratholmeRaid.Level", 78) },                      // Naxxramas
+                {574, sConfigMgr->GetIntDefault("InstanceBalance.Valgarde70.Level", 78) },                          // Utgarde Keep
+                {575, sConfigMgr->GetIntDefault("InstanceBalance.UtgardePinnacle.Level", 78) },
+                {576, sConfigMgr->GetIntDefault("InstanceBalance.Nexus70.Level", 78) },                             // The Nexus
+                {578, sConfigMgr->GetIntDefault("InstanceBalance.Nexus80.Level", 78) },                             // The Occulus
+                {595, sConfigMgr->GetIntDefault("InstanceBalance.StratholmeCOT.Level", 78) },                       // The Culling of Stratholme
+                {599, sConfigMgr->GetIntDefault("InstanceBalance.Ulduar70.Level", 78) },                            // Halls of Stone
+                {600, sConfigMgr->GetIntDefault("InstanceBalance.DrakTheronKeep.Level", 78) },                      // Drak'Tharon Keep
+                {601, sConfigMgr->GetIntDefault("InstanceBalance.Azjol_Uppercity.Level", 78) },                     // Azjol-Nerub
+                {602, sConfigMgr->GetIntDefault("InstanceBalance.Ulduar80.Level", 78) },                            // Halls of Lighting
+                {603, sConfigMgr->GetIntDefault("InstanceBalance.UlduarRaid.Level", 80) },                          // Ulduar
+                {604, sConfigMgr->GetIntDefault("InstanceBalance.GunDrak.Level", 78) },
+                {608, sConfigMgr->GetIntDefault("InstanceBalance.DalaranPrison.Level", 78) },                       // Violet Hold
+                {615, sConfigMgr->GetIntDefault("InstanceBalance.ChamberOfAspectsBlack.Level", 80) },               // The Obsidian Sanctum
+                {616, sConfigMgr->GetIntDefault("InstanceBalance.NexusRaid.Level", 80) },                           // The Eye of Eternity
+                {619, sConfigMgr->GetIntDefault("InstanceBalance.Azjol_LowerCity.Level", 78) },                     // Ahn'kahet: The Old Kingdom
+                {631, sConfigMgr->GetIntDefault("InstanceBalance.IcecrownCitadel.Level", 80) },                     // Icecrown Citadel
+                {632, sConfigMgr->GetIntDefault("InstanceBalance.IcecrownCitadel5Man.Level", 78) },                 // The Forge of Souls
+                {649, sConfigMgr->GetIntDefault("InstanceBalance.ArgentTournamentRaid.Level", 80) },                // Trial of the Crusader
+                {650, sConfigMgr->GetIntDefault("InstanceBalance.ArgentTournamentDungeon.Level", 80) },             // Trial of the Champion
+                {658, sConfigMgr->GetIntDefault("InstanceBalance.QuarryOfTears.Level", 78) },                       // Pit of Saron
+                {668, sConfigMgr->GetIntDefault("InstanceBalance.HallsOfReflection.Level", 78) },                   // Halls of Reflection
+                {724, sConfigMgr->GetIntDefault("InstanceBalance.ChamberOfAspectsRed.Level", 80) },                 // The Ruby Sanctum
+            };
         }
     }
 };
 
-class SolocraftAnnounce : public PlayerScript
+class InstanceBalanceAnnounce : public PlayerScript
 {
 public:
-    SolocraftAnnounce() : PlayerScript("SolocraftAnnounce"){}
+    InstanceBalanceAnnounce() : PlayerScript("InstanceBalanceAnnounce"){}
     void OnLogin(Player* Player, bool /*firstLogin*/) override
     {
-        if (SoloCraftEnable)
+        if (InstanceBalanceEnable)
         {
-            if (SoloCraftAnnounceModule)
+            if (InstanceBalanceAnnounceModule)
             {
                 std::ostringstream ss;
                 ss << "|cff4CFF00InstanceBalance |r is running. Stat Mod: %f Spell Mod: %f";
@@ -79,20 +160,20 @@ public:
     }
 };
 
-class solocraft_player_instance_handler : public PlayerScript
+class InstanceBalance_player_instance_handler : public PlayerScript
 {
 public:
-    solocraft_player_instance_handler() : PlayerScript("solocraft_player_instance_handler") {}
+    InstanceBalance_player_instance_handler() : PlayerScript("InstanceBalance_player_instance_handler") {}
 
     void OnMapChanged(Player* player) override
     {
-        if (sConfigMgr->GetBoolDefault("Solocraft.Enable", true))
+        if (sConfigMgr->GetBoolDefault("InstanceBalance.Enable", true))
         {
             Map* map = player->GetMap();
             int difficulty = CalculateDifficulty(map, player);
-            //int dunLevel = CalculateDungeonLevel(map, player);
+            int dunLevel = FindDungeonLevel(map, player);
             int numInGroup = GetNumInGroup(player);
-            ApplyBuffs(player, map, difficulty/*, dunLevel*/, numInGroup);
+            ApplyBuffs(player, map, difficulty, dunLevel, numInGroup);
         }
     }
 
@@ -150,60 +231,94 @@ private:
         return numInGroup;
     }
 
-    void ApplyBuffs(Player* player, Map* map, int difficulty,/*, dunLevel*/ int numInGroup) {
+    int FindDungeonLevel(Map* map, Player* /*player*/)
+    {
+        if (dungeons.find(map->GetId()) == dungeons.end()) //If dungeon find hits the end of the list.
+        {
+            return LevelDiff;
+        }
+        else
+        {
+            return dungeons[map->GetId()];
+        }
+    }
+
+    void ApplyBuffs(Player* player, Map* map, int difficulty, int dunLevel, int numInGroup) {
         int SpellPowerBonus = 0;
         if (difficulty != 0)
         {
             std::ostringstream ss;
-            float GroupDifficulty = GetGroupDifficulty(player);
-            //Check for buff or debuff player on dungeon enter
-            if (GroupDifficulty >= difficulty && SoloCraftDebuffEnable == 1)
+            if (player->GetLevel() <= dunLevel + LevelDiff)
             {
-                //GroupDifficulty exceeds dungeon setting -- Debuffs player
-                difficulty = (-abs(difficulty)) + (difficulty / numInGroup);
-                difficulty = roundf(difficulty * 100) / 100;
-            }
-            else
-            {
-                //GroupDifficulty does not exceed dungeon setting -- Buffs player
-                difficulty = difficulty / numInGroup;
-                difficulty = roundf(difficulty * 100) / 100;
-            }
-            //Modify player stats
-            for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)   //STATS in SharedDefines.h
-            {
-                //Buff player
-                player->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, difficulty* StatMultiplier, true); //UNIT_MOD in Unit.h line 391
-            }
-            //Set player health
-            player->SetFullHealth();//In Unit.h line 1524
-            //Modify spellcaster stats
-            if (player->GetPowerType() == POWER_MANA)
-            {
-                //Buff mana
-                player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-                //Buff spellpower
-                if (difficulty > 0)//Wont buff debuffed players
+                float GroupDifficulty = GetGroupDifficulty(player);
+                //Check for buff or debuff player on dungeon enter
+                if (GroupDifficulty >= difficulty && InstanceBalanceDebuffEnable == 1)
                 {
-                    SpellPowerBonus = static_cast<int>((player->GetLevel() * SpellStatMultiplier) * difficulty); // math pulled out of some dudes ass
-                    player->ApplySpellPowerBonus(SpellPowerBonus, true);
+                    //GroupDifficulty exceeds dungeon setting -- Debuffs player
+                    difficulty = (-abs(difficulty)) + (difficulty / numInGroup);
+                    difficulty = roundf(difficulty * 100) / 100;
                 }
-            }
-            //Announcements
-            if (difficulty > 0)
-            {
-                // Announce to player - Buff
-                 ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %i. Spellpower Bonus: %i";
-                ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus);
+                else
+                {
+                    //GroupDifficulty does not exceed dungeon setting -- Buffs player
+                    difficulty = difficulty / numInGroup;
+                    difficulty = roundf(difficulty * 100) / 100;
+                }
+                //Modify player stats
+                for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)   //STATS in SharedDefines.h
+                {
+                    //Buff player
+                    player->HandleStatFlatModifier(UnitMods(UNIT_MOD_STAT_START + i), TOTAL_VALUE, difficulty * StatMultiplier, true); //UNIT_MOD in Unit.h line 391
+                }
+                //Set player health
+                player->SetFullHealth();//In Unit.h line 1524
+                //Modify spellcaster stats
+                if (player->GetPowerType() == POWER_MANA)
+                {
+                    //Buff mana
+                    player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
+                    //If player is hunter. @todo Make this work for all summons.
+                    if (player->GetClass() == CLASS_HUNTER)
+                    {
+                        /*if (player->GetPet()->getPetType() == HUNTER_PET)
+                        {
+
+                            ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s  - Hunter Pet Debug";
+                            ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName());
+                            /*if (player->GetPet()->GetMaxHealth() < player->GetPet()->GetHealth())
+                            {
+                                //player->GetPet()->SetHealth(player->GetPet()->GetMaxHealth());
+                            }
+                        }*/
+                    }
+                    //Buff spellpower
+                    if (difficulty > 0)//Wont buff debuffed players
+                    {
+                        SpellPowerBonus = static_cast<int>((player->GetLevel() * SpellStatMultiplier) * difficulty); // math pulled out of some dudes ass
+                        player->ApplySpellPowerBonus(SpellPowerBonus, true);
+                    }
+                }
+                //Announcements
+                if (difficulty > 0)
+                {
+                    // Announce to player - Buff
+                    ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s  - Difficulty Offset: %i. Spellpower Bonus: %i";
+                    ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus);
+                }
+                else
+                {
+                    // Announce to player - Debuff
+                    ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
+                    ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty);
+                }
+                // Save Player Dungeon Offsets to Database
+                CharacterDatabase.PExecute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES (%u, %i, %u, %i, %f)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier);
             }
             else
             {
-                // Announce to player - Debuff
-                ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " entered %s  - |cffFF0000BE ADVISED - You have been debuffed by offset: %i. |cffFF8000 A group member already inside has the dungeon's full buff offset.  No Spellpower buff will be applied to spell casters.  ALL group members must exit the dungeon and re-enter to receive a balanced offset.";
-                ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty);
+                ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s. Level is too high for a buff.";
+                ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName());
             }
-            // Save Player Dungeon Offsets to Database
-            CharacterDatabase.PExecute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES (%u, %i, %u, %i, %f)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier);
         }
         else
         {
@@ -247,7 +362,7 @@ private:
             float StatsMultPct = (*result)[4].GetUInt32();
             // Inform the player
             std::ostringstream ss;
-            ss << "|cffFF0000[SoloCraft] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %i. Spellpower Bonus Removed: %i";
+            ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " exited to %s - Reverting Difficulty Offset: %i. Spellpower Bonus Removed: %i";
             ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty, SpellPowerBonus);
             // Clear the buffs
             for (int32 i = STAT_STRENGTH; i < MAX_STATS; ++i)
@@ -266,8 +381,8 @@ private:
 };
 
 
-void AddSC_solocraft() {
-    new SolocraftConfig();
-    new SolocraftAnnounce();
-    new solocraft_player_instance_handler();
+void AddSC_InstanceBalance() {
+    new InstanceBalanceConfig();
+    new InstanceBalanceAnnounce();
+    new InstanceBalance_player_instance_handler();
 }

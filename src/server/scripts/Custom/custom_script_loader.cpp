@@ -18,7 +18,7 @@
 // This is where scripts' loading functions should be declared:
 void AddMicroLFGScripts();
 void AddAutoSpellsScripts();
-void AddSC_solocraft();
+void AddSC_InstanceBalance();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -26,5 +26,5 @@ void AddCustomScripts()
 {
     AddMicroLFGScripts();
     AddAutoSpellsScripts();
-    AddSC_solocraft();
+    AddSC_InstanceBalance();
 }
