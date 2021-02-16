@@ -285,7 +285,7 @@ private:
 
                             ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s  - Hunter Pet Debug";
                             ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName());
-                            /*if (player->GetPet()->GetMaxHealth() < player->GetPet()->GetHealth())
+                            if (player->GetPet()->GetMaxHealth() < player->GetPet()->GetHealth())
                             {
                                 //player->GetPet()->SetHealth(player->GetPet()->GetMaxHealth());
                             }
