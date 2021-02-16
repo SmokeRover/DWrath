@@ -32,8 +32,6 @@ int LevelDiff = 10;
 
 // Add alternate ApplyBuff for different raid tiers, or add math solution that takes tiers into consideration.
 
-// Add levelDifference to decline buff to overleveled players.
-
 // Player stats may set to 0 if they log out in a dungeon and are removed outside the instance.
 // Seems like the game might consider the outside map as an instance if it tries loading the instance
 // map but opts to remove the player afterwards.
@@ -277,20 +275,6 @@ private:
                 {
                     //Buff mana
                     player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-                    //If player is hunter. @todo Make this work for all summons.
-                    if (player->GetClass() == CLASS_HUNTER)
-                    {
-                        /*if (player->GetPet()->getPetType() == HUNTER_PET)
-                        {
-
-                            ss << "|cffFF0000[InstanceBalance] |cffFF8000" << player->GetName() << " entered %s  - Hunter Pet Debug";
-                            ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName());
-                            if (player->GetPet()->GetMaxHealth() < player->GetPet()->GetHealth())
-                            {
-                                //player->GetPet()->SetHealth(player->GetPet()->GetMaxHealth());
-                            }
-                        }*/
-                    }
                     //Buff spellpower
                     if (difficulty > 0)//Wont buff debuffed players
                     {
