@@ -35,6 +35,10 @@ public:
             {
                 ChatHandler(player->GetSession()).SendSysMessage("|cff4CFF00Auto Spells |r is running.");
             }
+            if (player->GetLevel() >= 1)
+            {
+                player->LearnSpell(11305, false, 0); //learn sprint rank 3
+            }
         }
 
         if (sConfigMgr->GetBoolDefault("LearnSpells.LearnAllOnFirstLogin", false))
@@ -271,7 +275,6 @@ private:
                         break;
                     }
                 }
-
                 if (valid)
                     player->LearnSpell(spellInfo->Id,false, 0);
             }

@@ -1212,7 +1212,7 @@ BeepAtStart = 1
 #        Example:     "Welcome to John's Server!@This server is proud to be powered by Trinity Core."
 #        Default:     "Welcome to a Trinity Core server."
 
-Motd = "Welcome to a Trinity Core server."
+Motd = "Welcome to DWrath."
 
 #
 #    Server.LoginInfo
@@ -1255,7 +1255,7 @@ DeletedCharacterTicketTrace = 0
 #           LFG_OPTION_ENABLE_RAID_BROWSER   = 2,     Enable the raid browser
 #        Default:     1
 
-DungeonFinder.OptionsMask = 1
+DungeonFinder.OptionsMask = 2
 
 #
 #   DBC.EnforceItemAttributes
@@ -2384,21 +2384,21 @@ Rate.Talent = 1
 #        Description: Reputation gain rate.
 #        Default:     1
 
-Rate.Reputation.Gain = 1
+Rate.Reputation.Gain = 3
 
 #
 #    Rate.Reputation.LowLevel.Kill
 #        Description: Reputation gain from killing low level (grey) creatures.
 #        Default:     1
 
-Rate.Reputation.LowLevel.Kill = 1
+Rate.Reputation.LowLevel.Kill = 1.5
 
 #
 #    Rate.Reputation.LowLevel.Quest
 #        Description: Reputation gain rate.
 #        Default:     1
 
-Rate.Reputation.LowLevel.Quest = 1
+Rate.Reputation.LowLevel.Quest = 1.5
 
 #
 #    Rate.Reputation.RecruitAFriendBonus
@@ -3203,7 +3203,7 @@ PvPToken.ItemCount = 1
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-NoResetTalentsCost = 0
+NoResetTalentsCost = 1
 
 #
 #     Guild.AllowMultipleGuildMaster
@@ -3212,7 +3212,7 @@ NoResetTalentsCost = 0
 #        Default:     0 - (Disabled)
 #                     1 - (Enabled)
 
-Guild.AllowMultipleGuildMaster = 0
+Guild.AllowMultipleGuildMaster = 1
 
 #
 #     ShowKickInWorld
@@ -3245,7 +3245,7 @@ ShowBanInWorld = 0
 #        Description: String to be displayed at first login of newly created characters.
 #         Default:    "" - (Disabled)
 
-PlayerStart.String = ""
+PlayerStart.String = "Yo whaddup"
 
 #
 #     LevelReq.Trade
@@ -4179,8 +4179,8 @@ InstanceBalanceStatsMultiplier = 20.0
 # Defaults: 5, 10, 25, 40
 InstanceBalance.5MAN.Dungeon = 5
 InstanceBalance.10MAN.Dungeon = 10
-InstanceBalance.25MAN.Dungeon = 25.0
-InstanceBalance.40MAN.Dungeon = 40.0
+InstanceBalance.25MAN.Dungeon = 25
+InstanceBalance.40MAN.Dungeon = 40
 InstanceBalance.D649H10.Dungeon = 10
 InstanceBalance.D649H25.Dungeon = 25
 ################################################################################################
