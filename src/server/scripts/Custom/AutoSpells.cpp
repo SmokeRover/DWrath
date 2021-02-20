@@ -35,10 +35,14 @@ public:
             {
                 ChatHandler(player->GetSession()).SendSysMessage("|cff4CFF00Auto Spells |r is running.");
             }
-            if (player->GetLevel() >= 1)
+            if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
             {
-                player->LearnSpell(11305, false, 0); //learn sprint rank 3
+                if (player->GetLevel() >= 1)
+                {
+                    player->LearnSpell(11305, false, 0); //learn sprint rank 3
+                }
             }
+            
         }
 
         if (sConfigMgr->GetBoolDefault("LearnSpells.LearnAllOnFirstLogin", false))
@@ -55,6 +59,36 @@ public:
             {
                 if (oldLevel < player->GetLevel())
                     LearnSpellsForNewLevel(player, oldLevel);
+            }
+            if (sConfigMgr->GetBoolDefault("LearnSpells.LearnPortals", true))
+            {
+                player->AddItem(17031, 10);
+                switch (player->GetTeamId())
+                {
+                case TEAM_ALLIANCE:
+                    //  Alliance teleports
+                    player->LearnSpell(3565, false, 0);       //Darnassus
+                    player->LearnSpell(3562, false, 0);       //Ironforge
+                    player->LearnSpell(3561, false, 0);       //Stormwind
+                    player->LearnSpell(32271, false, 0);      //Exodar
+                    if (player->GetLevel() >= 60)
+                    {
+                        player->LearnSpell(33690, false, 0);  //Shattrath
+                    }
+                    break;
+                case TEAM_HORDE:
+                    player->LearnSpell(3567, false, 0);       //Orgrimmar
+                    player->LearnSpell(32272, false, 0);      //Silvermoon
+                    player->LearnSpell(3566, false, 0);       //Thunder Bluff
+                    player->LearnSpell(3563, false, 0);       //Undercity
+                    if (player->GetLevel() >= 60)
+                    {
+                        player->LearnSpell(35715, false, 0);  //Shattrath
+                    }
+                    break;
+                default:
+                    break;
+                }
             }
         }
     }

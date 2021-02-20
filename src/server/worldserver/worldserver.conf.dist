@@ -4136,6 +4136,15 @@ LearnSpells.LearnAllOnFirstLogin = 0
 
 MaxLevel = 80
 #
+
+# Learn Sprint on any character by default
+LearnSpells.LearnSprint = 1
+#
+
+# Learn mage teleports on any character by default + shattrath at lvl 60
+LearnSpells.LearnPortals = 1
+#
+#
 ###################################################################################################
 
 
