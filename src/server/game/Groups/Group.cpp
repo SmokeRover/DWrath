@@ -457,6 +457,10 @@ bool Group::AddMember(Player* player)
     }
 
     SendUpdate();
+    // DWrath EDIT, This is here for GroupLevel, I couldnt figure out a way to execute the script otherwise.
+    // Just piggybacks off the Group class to make my script run with the extra bits.
+    sScriptMgr->OnGroupAddMemberGL(this, player->GetGUID(), player);
+
     sScriptMgr->OnGroupAddMember(this, player->GetGUID());
 
     if (!IsLeader(player->GetGUID()) && !isBGGroup() && !isBFGroup())

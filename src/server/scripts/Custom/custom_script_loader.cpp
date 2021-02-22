@@ -19,6 +19,7 @@
 void AddMicroLFGScripts();
 void AddAutoSpellsScripts();
 void AddSC_InstanceBalance();
+void Add_GroupLevel();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -27,4 +28,5 @@ void AddCustomScripts()
     AddMicroLFGScripts();
     AddAutoSpellsScripts();
     AddSC_InstanceBalance();
+    Add_GroupLevel();
 }
