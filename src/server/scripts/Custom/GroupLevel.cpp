@@ -27,7 +27,7 @@ will require enabling the command for non-gm players.
 #include "DatabaseEnv.h"
 #include "WorldSession.h"
 
-int maxDiff = 7;
+uint8 maxDiff = 7;
 std::ostringstream ss;
 
 // LOGIN CLASS
@@ -56,6 +56,7 @@ class grouplevel_handler : public GroupScript
         void OnAddMemberGL(Group* group, ObjectGuid guid, Player* player) override
         {
             GetGroupLevels(group, player);
+            guid = player->GetGUID();
         }
 
         void GetGroupLevels(Group * group, Player * player)
@@ -83,7 +84,7 @@ class grouplevel_handler : public GroupScript
                             ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());
                             ss.str("");
                             int memberLvl = member->GetLevel();                    //  Gets the level of the member
-                            if (memberLvl >= player->GetLevel() + maxDiff)         // Compares members level with the player + difference
+                            if (memberLvl >= (player->GetLevel() + maxDiff))         // Compares members level with the player + difference
                             {
                                 player->GetGroup();
                                 modifyExperience(player, memberLvl);
