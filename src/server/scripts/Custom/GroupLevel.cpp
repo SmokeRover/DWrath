@@ -9,9 +9,13 @@ the lvl 30 player, used as a method of level boosting.
 will require enabling the command for non-gm players.
 */
 
+// Using custom_dwrath_character_stats needed to adjust how InstanceBalance handled clearing buffs
+// Going forward, any toggles I may create will be stored in the dwrath_character_stats table
+// Need to add a way to delete rows when a character is deleted
 
-//      FIND A WAY OF GETTING GROUP DETAILS FROM THE Player* class
-//      TRYING TO JUGGLE WITH Group* class IS A PAIN IN THE ASS AND NOT WORKING
+// Needs logic for creating and applying the exerience boost
+// Needs logic for adjusting & removing the boost when a player joins, leaves or the group disbands.
+// Needs logic for if the player disables GroupLevel while boosted.
 
 #include "Config.h"
 #include "ScriptMgr.h"
@@ -20,12 +24,10 @@ will require enabling the command for non-gm players.
 #include "Chat.h"
 #include "Opcodes.h"
 #include "ScriptPCH.h"
+#include "DatabaseEnv.h"
 #include "WorldSession.h"
 
 int maxDiff = 7;
-bool grplvlEnabled = 1;
-Group* _group;
-Player* _player;
 std::ostringstream ss;
 
 // LOGIN CLASS
@@ -35,6 +37,11 @@ public:
     grouplevel_login() : PlayerScript("grouplevel_login"){}
     void OnLogin(Player* player, bool) override
     {
+        QueryResult result = CharacterDatabase.PQuery("SELECT 'GUID' FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
+        if (!result)
+        {
+            CharacterDatabase.PExecute("REPLACE INTO custom_dwrath_character_stats (GUID) VALUES (%u)", player->GetGUID());
+        }
         std::ostringstream ss;
         ss << "|cff4CFF00GroupLevel |r is running.";
         ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());
@@ -48,12 +55,14 @@ class grouplevel_handler : public GroupScript
         grouplevel_handler() : GroupScript("grouplevel_handler") {}
         void OnAddMemberGL(Group* group, ObjectGuid guid, Player* player) override
         {
-            GetGroupLevels(player->GetGroup() , player);
+            GetGroupLevels(group, player);
         }
 
         void GetGroupLevels(Group * group, Player * player)
         {
-            if (grplvlEnabled)
+            QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
+            bool gltoggle = (*result)[0].GetUInt32();
+            if ((gltoggle == true))
             {
                 ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". ENABLED";
                 ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());
@@ -89,6 +98,7 @@ class grouplevel_handler : public GroupScript
         {
             ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Modify Experience RAN. memberLvl = %i";
             ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), memberLvl);
+            ss.str("");
         }
 
 };
@@ -98,7 +108,6 @@ using namespace Trinity::ChatCommands;
 class grouplevel_commands : public CommandScript
 {
 public:
-
     grouplevel_commands() : CommandScript("grouplevel_commands"){}
     ChatCommandTable GetCommands() const override
     {
@@ -117,22 +126,28 @@ public:
 
     static bool HandleGLEnableCommand(ChatHandler* handler)
     {
-        grplvlEnabled = 1;
+        Player* me = handler->GetSession()->GetPlayer();
+        CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET GroupLevelTog = 1 WHERE GUID = %u", me->GetGUID());
+        QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
         handler->PSendSysMessage("Enabling GroupLevel boosting.");
-        Player* _player = handler->GetSession()->GetPlayer();
         return true;
     }
 
     static bool HandleGLDisableCommand(ChatHandler* handler)
     {
-        grplvlEnabled = 0;
+        Player* me = handler->GetSession()->GetPlayer();
+        CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET GroupLevelTog = 0 WHERE GUID = %u", me->GetGUID());
+        QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
         handler->PSendSysMessage("Disabling GroupLevel boosting.");
         return true;
     }
 
     static bool HandleGLMultiplierCommand(ChatHandler* handler)
     {
-        handler->PSendSysMessage("GroupLevel multipliers. %i", grplvlEnabled);
+        Player* me = handler->GetSession()->GetPlayer();
+        QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
+        bool gltoggle = (*result)[0].GetUInt32();
+        handler->PSendSysMessage("GroupLevel Stats- Toggled = %b, Level Difference = PLHD, Boost Rate = PLHD", gltoggle);
         return true;
     }
 };

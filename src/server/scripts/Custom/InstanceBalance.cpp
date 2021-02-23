@@ -296,7 +296,7 @@ private:
                     ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty);
                 }
                 // Save Player Dungeon Offsets to Database
-                CharacterDatabase.PExecute("REPLACE INTO custom_solocraft_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES (%u, %i, %u, %i, %f)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier);
+                CharacterDatabase.PExecute("REPLACE INTO custom_dwrath_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES (%u, %i, %u, %i, %f)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier);
             }
             else
             {
@@ -321,7 +321,7 @@ private:
             {
                 if (itr->guid != player->GetGUID())
                 {
-                    QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize` FROM `custom_solocraft_character_stats` WHERE GUID = %u", itr->guid);
+                    QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize` FROM `custom_dwrath_character_stats` WHERE GUID = %u", itr->guid);
                     if (result)
                     {
                         if ((*result)[1].GetUInt32() > 0)
@@ -338,7 +338,7 @@ private:
     void ClearBuffs(Player* player, Map* map)
     {
         //Database query to get offset from the last instance player exited
-        QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_solocraft_character_stats` WHERE GUID = %u", player->GetGUID());
+        QueryResult result = CharacterDatabase.PQuery("SELECT `GUID`, `Difficulty`, `GroupSize`, `SpellPower`, `Stats` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
         if (result)
         {
             int difficulty = (*result)[1].GetUInt32();
@@ -359,7 +359,7 @@ private:
                 player->ApplySpellPowerBonus(SpellPowerBonus, false);
             }
             //Remove database entry as the player is no longer in an instance
-            CharacterDatabase.PExecute("DELETE FROM custom_solocraft_character_stats WHERE GUID = %u", player->GetGUID());
+            CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET Difficulty = 0, GroupSize = 1, SpellPower = 0, Stats = 100 WHERE GUID = %u", player->GetGUID() /*"DELETE FROM custom_dwrath_character_stats WHERE GUID = %u", player->GetGUID()*/);
         }
     }
 };
