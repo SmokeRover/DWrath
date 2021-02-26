@@ -167,7 +167,6 @@ namespace Trinity
             sScriptMgr->OnBaseGainCalculation(baseGain, pl_level, mob_level, content);
             return baseGain;
         }
-
         inline uint32 Gain(Player* player, Unit* u, bool isBattleGround = false)
         {
             Creature* creature = u->ToCreature();
@@ -197,7 +196,9 @@ namespace Trinity
                 if (creature && creature->m_PlayerDamageReq) // if players dealt less than 50% of the damage and were credited anyway (due to CREATURE_FLAG_EXTRA_NO_PLAYER_DAMAGE_REQ), scale XP gained appropriately (linear scaling)
                     xpMod *= 1.0f - 2.0f * creature->m_PlayerDamageReq / creature->GetMaxHealth();
 
-                gain = uint32(gain * xpMod);
+                //DWrath EDIT
+                /*gain = uint32(gain * xpMod);*/
+                gain = uint32(gain * xpMod * player->GetBoostedXP());
             }
 
             sScriptMgr->OnGainCalculation(gain, player, u);
@@ -239,5 +240,4 @@ namespace Trinity
         }
     } // namespace Trinity::XP
 } // namespace Trinity
-
 #endif

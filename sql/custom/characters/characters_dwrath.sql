@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS `custom_dwrath_character_stats` (
 	`SpellPower` INT(10) UNSIGNED NOT NULL DEFAULT '0',
 	`Stats` FLOAT NOT NULL DEFAULT '100',
 	`GroupLevelTog` TINYINT(3) NULL DEFAULT '0',
+    `xp_mod` int(10) UNSIGNED NOT NULL DEFAULT '1',
 	PRIMARY KEY (`GUID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;

@@ -1748,7 +1748,7 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         void SetSemaphoreTeleportFar(bool semphsetting) { mSemaphoreTeleport_Far = semphsetting; }
         void ProcessDelayedOperations();
 
-        void CheckAreaExploreAndOutdoor(void);
+        void CheckAreaExploreAndOutdoor();
 
         static uint32 TeamForRace(uint8 race);
         uint32 GetTeam() const { return m_team; }
@@ -2173,6 +2173,10 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
 
         std::string GetDebugInfo() const override;
 
+        //DWrath EDIT
+        void SetBoostedXP(uint32 rate) { m_BoostedXPRate = rate;  }
+        uint32 GetBoostedXP() const { return m_BoostedXPRate; }
+
     protected:
         // Gamemaster whisper whitelist
         GuidList WhisperList;
@@ -2495,6 +2499,9 @@ class TC_GAME_API Player : public Unit, public GridObject<Player>
         uint32 _pendingBindTimer;
 
         uint32 _activeCheats;
+
+        //DWrath EDIT
+        uint32 m_BoostedXPRate;
 
         // variables to save health and mana before duel and restore them after duel
         uint32 healthBeforeDuel;

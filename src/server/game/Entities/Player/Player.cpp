@@ -407,6 +407,9 @@ Player::Player(WorldSession* session): Unit(true)
     m_reputationMgr = new ReputationMgr(this);
 
     m_groupUpdateTimer.Reset(5000);
+
+    //DWrath EDIT
+    m_BoostedXPRate = 1;
 }
 
 Player::~Player()
@@ -6488,6 +6491,8 @@ void Player::CheckAreaExploreAndOutdoor()
                     uint32 minScaledXP = uint32(sObjectMgr->GetBaseXP(areaEntry->ExplorationLevel)*sWorld->getRate(RATE_XP_EXPLORE)) * sWorld->getIntConfig(CONFIG_MIN_DISCOVERED_SCALED_XP_RATIO) / 100;
                     XP = std::max(minScaledXP, XP);
                 }
+                //DWrath EDIT
+                XP *= GetBoostedXP();
 
                 GiveXP(XP, nullptr);
                 SendExplorationExperience(areaId, XP);
@@ -15134,7 +15139,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     //this THING should be here to protect code from quest, which cast on player far teleport as a reward
     //should work fine, cause far teleport will be executed in Player::Update()
     SetCanDelayTeleport(true);
-
+    
     uint32 quest_id = quest->GetQuestId();
 
     for (uint8 i = 0; i < QUEST_ITEM_OBJECTIVES_COUNT; ++i)
@@ -15198,7 +15203,10 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     bool rewarded = IsQuestRewarded(quest_id) && !quest->IsDFQuest();
 
     // Not give XP in case already completed once repeatable quest
-    uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this)*sWorld->getRate(RATE_XP_QUEST));
+    //DWrath EDIT
+    /*uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this)*sWorld->getRate(RATE_XP_QUEST));*/
+    uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this) * sWorld->getRate(RATE_XP_QUEST) * GetBoostedXP());
+
 
     // handle SPELL_AURA_MOD_XP_QUEST_PCT auras
     XP *= GetTotalAuraMultiplier(SPELL_AURA_MOD_XP_QUEST_PCT);

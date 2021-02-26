@@ -821,11 +821,17 @@ class TC_GAME_API GroupScript : public ScriptObject
         // Called when a member is removed from a group.
         virtual void OnRemoveMember(Group* /*group*/, ObjectGuid /*guid*/, RemoveMethod /*method*/, ObjectGuid /*kicker*/, char const* /*reason*/) { }
 
+        // DWrath EDIT, virtal void call for clone of OnRemoveMember
+        virtual void OnRemoveMemberGL(Group* /*group*/, ObjectGuid /*guid*/, RemoveMethod /*method*/, ObjectGuid /*kicker*/, char const* /*reason*/, Player* player) { }
+
         // Called when the leader of a group is changed.
         virtual void OnChangeLeader(Group* /*group*/, ObjectGuid /*newLeaderGuid*/, ObjectGuid /*oldLeaderGuid*/) { }
 
         // Called when a group is disbanded.
         virtual void OnDisband(Group* /*group*/) { }
+
+        // DWrath EDIT
+        virtual void OnDisbandGL(Group* /*group*/, Player* /*player*/) { }
 };
 
 // Manages registration, loading, and execution of scripts.
@@ -1081,8 +1087,12 @@ class TC_GAME_API ScriptMgr
         void OnGroupAddMemberGL(Group* group, ObjectGuid guid, Player* player);
         void OnGroupInviteMember(Group* group, ObjectGuid guid);
         void OnGroupRemoveMember(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason);
+        // DWrath EDIT, function call for clone of OnGroupRemoveMember
+        void OnGroupRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player);
         void OnGroupChangeLeader(Group* group, ObjectGuid newLeaderGuid, ObjectGuid oldLeaderGuid);
         void OnGroupDisband(Group* group);
+        //DWrath EDIT
+        void OnGroupDisbandGL(Group* group, Player* player);
 
     public: /* UnitScript */
 

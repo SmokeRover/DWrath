@@ -2091,6 +2091,12 @@ void ScriptMgr::OnGroupRemoveMember(Group* group, ObjectGuid guid, RemoveMethod 
     ASSERT(group);
     FOREACH_SCRIPT(GroupScript)->OnRemoveMember(group, guid, method, kicker, reason);
 }
+// DWrath EDIT, a
+void ScriptMgr::OnGroupRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player)
+{
+    ASSERT(group);
+    FOREACH_SCRIPT(GroupScript)->OnRemoveMemberGL(group, guid, method, kicker, reason, player);
+}
 
 void ScriptMgr::OnGroupChangeLeader(Group* group, ObjectGuid newLeaderGuid, ObjectGuid oldLeaderGuid)
 {
@@ -2102,6 +2108,12 @@ void ScriptMgr::OnGroupDisband(Group* group)
 {
     ASSERT(group);
     FOREACH_SCRIPT(GroupScript)->OnDisband(group);
+}
+// DWrath EDIT
+void ScriptMgr::OnGroupDisbandGL(Group* group, Player* player)
+{
+    ASSERT(group);
+    FOREACH_SCRIPT(GroupScript)->OnDisbandGL(group, player);
 }
 
 // Unit
