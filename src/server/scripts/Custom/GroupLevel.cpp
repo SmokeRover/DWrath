@@ -10,10 +10,12 @@ the lvl 30 player, used as a method of level boosting.
 // Going forward, any toggles I may create will be stored in the dwrath_character_stats table
 // Need to add a way to delete rows when a character is deleted
 
-// Needs logic for adjusting & removing the boost when a player joins, leaves or the group disbands.
+// Needs logic for when the player goes offline while in a group, reactvating boost on log in
+// Need logic for removing boost when a member goes offline
 // Needs logic for the player leveling up in the group.
 
-// OnRemoveMember, OnDisband overrides arent running when it seems like they should
+// Uninviting an offline player crashes the server
+// Probably need to specify if the player is in world before running the GetGroupLevel?
 
 // When lvl 1 grouped with lvl 80-  Exp gain for lvl 1 is 1xp
 // When lvl is opted-               Exp gain for lvl 1 is 3xp
@@ -65,11 +67,12 @@ public:
         guid = player->GetGUID();
     }
 
-    //  OnRemove and OnDisband dont seem to run in either case
     void OnRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player) override
     {
         GetGroupLevels(group, player);
         guid = player->GetGUID();
+        method = GROUP_REMOVEMETHOD_DEFAULT;
+        reason = NULL;
         ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". REMOVE RAN";
         ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());
         ss.str("");
@@ -117,9 +120,18 @@ public:
                         if (memberLvl >= (player->GetLevel() + maxDiff))         // Compares members level with the player + difference
                         {
                             modifyExperience(player, memberLvl);
+                        }else
+                        {
+                            CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET BoostedXP = 1 WHERE GUID = %u", player->GetGUID());
+                            player->SetBoostedXP(1);
                         }
                     }
                 }
+            }
+            else
+            {
+                CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET BoostedXP = 1 WHERE GUID = %u", player->GetGUID());
+                player->SetBoostedXP(1);
             }
         }
     }
@@ -185,7 +197,7 @@ public:
         CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET GroupLevelTog = 1 WHERE GUID = %u", me->GetGUID());
         QueryResult result = CharacterDatabase.PQuery("SELECT `BoostedXP` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
         unsigned int boostedXP = (*result)[0].GetUInt32();
-        handler->PSendSysMessage("Enabling GroupLevel boosting. ");
+        handler->PSendSysMessage("Enabling GroupLevel boosting. Boosted = %i", boostedXP);
         Sleep(10); // Wait a few mSeconds for DB to update
         hGroupCheck->handleGroupCheck(me, group);
         return true;
@@ -210,10 +222,11 @@ public:
     static bool HandleGLMultiplierCommand(ChatHandler* handler)
     {
         Player* me = handler->GetSession()->GetPlayer();
-        QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` `BoostedXP` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
-        bool gltoggle = (*result)[0].GetUInt32();
-        unsigned int boostRate = (*result)[1].GetUInt32();
-        handler->PSendSysMessage("GroupLevel Stats- Toggled = %b, Level Difference = PLHD, Boost Rate = %i", gltoggle, boostRate);
+        QueryResult resultTog = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
+        QueryResult resultBoost = CharacterDatabase.PQuery("SELECT `BoostedXP` FROM `custom_dwrath_character_stats` WHERE GUID = %u", me->GetGUID());
+        bool gltoggle = (*resultTog)[0].GetUInt32();
+        unsigned int boostedXP = (*resultBoost)[0].GetUInt32();
+        handler->PSendSysMessage("GroupLevel Stats- Toggled = %b, Level Difference = PLHD, boostedXP = %i", gltoggle, boostedXP);
         return true;
     }
 };

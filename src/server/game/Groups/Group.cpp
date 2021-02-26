@@ -549,6 +549,9 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
     sScriptMgr->OnGroupRemoveMember(this, guid, method, kicker, reason);
 
     Player* player = ObjectAccessor::FindConnectedPlayer(guid);
+
+    //DWrath EDIT
+    sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
     if (player)
     {
         for (GroupReference* itr = GetFirstMember(); itr != nullptr; itr = itr->next())
@@ -798,9 +801,12 @@ void Group::Disband(bool hideDestroy /* = false */)
     sScriptMgr->OnGroupDisband(this);
 
     Player* player;
+
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
         player = ObjectAccessor::FindConnectedPlayer(citr->guid);
+        //DWrath EDIT
+        sScriptMgr->OnGroupDisbandGL(this, player);
         if (!player)
             continue;
 
