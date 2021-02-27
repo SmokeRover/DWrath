@@ -2109,12 +2109,6 @@ void ScriptMgr::OnGroupDisband(Group* group)
     ASSERT(group);
     FOREACH_SCRIPT(GroupScript)->OnDisband(group);
 }
-// DWrath EDIT
-void ScriptMgr::OnGroupDisbandGL(Group* group, Player* player)
-{
-    ASSERT(group);
-    FOREACH_SCRIPT(GroupScript)->OnDisbandGL(group, player);
-}
 
 // Unit
 void ScriptMgr::OnHeal(Unit* healer, Unit* reciever, uint32& gain)

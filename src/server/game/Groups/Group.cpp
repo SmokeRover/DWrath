@@ -546,12 +546,9 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
 {
     BroadcastGroupUpdate();
 
+    Player* player = ObjectAccessor::FindConnectedPlayer(guid);
     sScriptMgr->OnGroupRemoveMember(this, guid, method, kicker, reason);
 
-    Player* player = ObjectAccessor::FindConnectedPlayer(guid);
-
-    //DWrath EDIT
-    sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
     if (player)
     {
         for (GroupReference* itr = GetFirstMember(); itr != nullptr; itr = itr->next())
@@ -560,7 +557,7 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
             {
                 if (groupMember->GetGUID() == guid)
                     continue;
-
+                    
                 groupMember->RemoveAllGroupBuffsFromCaster(guid);
                 player->RemoveAllGroupBuffsFromCaster(groupMember->GetGUID());
             }
@@ -607,6 +604,9 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
 
             _homebindIfInstance(player);
         }
+
+        //DWrath EDIT
+        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
 
         // Remove player from group in DB
         if (!isBGGroup() && !isBFGroup())
@@ -687,6 +687,8 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
     else
     {
         Disband();
+        //DWrath EDIT. Runs after disband to disable boost when party disbands
+        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
         return false;
     }
 }
@@ -805,8 +807,6 @@ void Group::Disband(bool hideDestroy /* = false */)
     for (member_citerator citr = m_memberSlots.begin(); citr != m_memberSlots.end(); ++citr)
     {
         player = ObjectAccessor::FindConnectedPlayer(citr->guid);
-        //DWrath EDIT
-        sScriptMgr->OnGroupDisbandGL(this, player);
         if (!player)
             continue;
 

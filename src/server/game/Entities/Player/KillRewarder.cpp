@@ -146,7 +146,9 @@ inline void KillRewarder::_RewardXP(Player* player, float rate)
             uint32(xp * rate) :             // Reward FULL XP if all group members are not gray.
             uint32(xp * rate / 2) + 1;      // Reward only HALF of XP if some of group members are gray.
         else
+        {
             xp = 0;
+        }
     }
     if (xp)
     {
@@ -194,9 +196,18 @@ void KillRewarder::_RewardPlayer(Player* player, bool isDungeon)
     // Give reputation and kill credit only in PvE.
     if (!_isPvP || _isBattleGround)
     {
-        float const rate = _group ?
-            _groupRate * float(player->GetLevel()) / _sumLevel : // Group rate depends on summary level.
-            1.0f;                                                // Personal rate is 100%.
+        //DWrath EDIT
+        float const rate = 1.0f;
+        if(player->GetBoostedXP() > 1)
+        {
+            float const rate = 1.0f;
+        }
+        else// Otherwise run the default group XP rates
+        {
+            float const rate = _group ?
+                _groupRate * float(player->GetLevel()) / _sumLevel :// Group rate depends on summary level.
+                1.0f;// Personal rate is 100%.
+        }                                                
         if (_xp)
             // 4.2. Give XP.
             _RewardXP(player, rate);

@@ -731,6 +731,7 @@ class TC_GAME_API PlayerScript : public ScriptObject
 
         // Called when a player presses release when he died
         virtual void OnPlayerRepop(Player* /*player*/) { }
+
 };
 
 class TC_GAME_API AccountScript : public ScriptObject
@@ -830,8 +831,6 @@ class TC_GAME_API GroupScript : public ScriptObject
         // Called when a group is disbanded.
         virtual void OnDisband(Group* /*group*/) { }
 
-        // DWrath EDIT
-        virtual void OnDisbandGL(Group* /*group*/, Player* /*player*/) { }
 };
 
 // Manages registration, loading, and execution of scripts.
@@ -1091,8 +1090,6 @@ class TC_GAME_API ScriptMgr
         void OnGroupRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player);
         void OnGroupChangeLeader(Group* group, ObjectGuid newLeaderGuid, ObjectGuid oldLeaderGuid);
         void OnGroupDisband(Group* group);
-        //DWrath EDIT
-        void OnGroupDisbandGL(Group* group, Player* player);
 
     public: /* UnitScript */
 
