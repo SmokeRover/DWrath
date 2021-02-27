@@ -67,12 +67,12 @@ public:
         guid = player->GetGUID();
     }
 
-    void OnRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod /*method*/, ObjectGuid kicker, char const* reason, Player* player) override
+    void OnRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod /*method*/, ObjectGuid kicker, char const* /*reason*/, Player* player) override
     {
         GetGroupLevels(group, player);
         guid = player->GetGUID();
         //method = GROUP_REMOVEMETHOD_DEFAULT;
-        reason = NULL;
+        //reason = NULL;
         ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". REMOVE RAN";
         ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());
         ss.str("");
