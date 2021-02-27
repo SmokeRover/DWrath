@@ -67,7 +67,7 @@ public:
         guid = player->GetGUID();
     }
 
-    void OnRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod /*method*/, ObjectGuid kicker, char const* /*reason*/, Player* player) override
+    void OnRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod /*method*/, ObjectGuid /*kicker*/, char const* /*reason*/, Player* player) override
     {
         GetGroupLevels(group, player);
         guid = player->GetGUID();
