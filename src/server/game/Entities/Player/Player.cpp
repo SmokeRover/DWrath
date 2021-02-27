@@ -4258,6 +4258,11 @@ void Player::DeleteFromDB(ObjectGuid playerguid, uint32 accountId, bool updateRe
             stmt->setUInt32(0, guid);
             trans->Append(stmt);
 
+            //DWrath EDIT, delete row from custom_dwrath_character_stats
+            stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_ACCOUNT_DWRATH);
+            stmt->setUInt32(0, guid);
+            trans->Append(stmt);
+
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PLAYER_ACCOUNT_DATA);
             stmt->setUInt32(0, guid);
             trans->Append(stmt);
@@ -15205,7 +15210,7 @@ void Player::RewardQuest(Quest const* quest, uint32 reward, Object* questGiver, 
     // Not give XP in case already completed once repeatable quest
     //DWrath EDIT
     /*uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this)*sWorld->getRate(RATE_XP_QUEST));*/
-    uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this) * sWorld->getRate(RATE_XP_QUEST) * GetBoostedXP());
+    uint32 XP = rewarded ? 0 : uint32(quest->GetXPReward(this)*sWorld->getRate(RATE_XP_QUEST) * GetBoostedXP());
 
 
     // handle SPELL_AURA_MOD_XP_QUEST_PCT auras

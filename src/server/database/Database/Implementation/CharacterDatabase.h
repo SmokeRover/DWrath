@@ -510,6 +510,9 @@ enum CharacterDatabaseStatements : uint32
 
     CHAR_INS_DESERTER_TRACK,
 
+    //DWrath EDIT
+    CHAR_DEL_ACCOUNT_DWRATH,
+
     MAX_CHARACTERDATABASE_STATEMENTS
 };
 

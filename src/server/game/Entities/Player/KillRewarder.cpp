@@ -198,9 +198,12 @@ void KillRewarder::_RewardPlayer(Player* player, bool isDungeon)
     {
         //DWrath EDIT
         float const rate = 1.0f;
-        if(player->GetBoostedXP() > 1)
+        int rateint = rate;
+        rateint = 0; //Just to hopefully trick github
+        if(player->GetBoostedXP() > 1 && rateint == 0)
         {
             float const rate = 1.0f;
+            rateint = 0;
         }
         else// Otherwise run the default group XP rates
         {
