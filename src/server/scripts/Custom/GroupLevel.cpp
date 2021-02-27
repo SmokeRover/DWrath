@@ -31,7 +31,7 @@ the lvl 30 player, used as a method of level boosting.
 #include "ScriptPCH.h"
 #include "DatabaseEnv.h"
 #include "WorldSession.h"
-
+#include <Windows.h>
 // ADD maxDiff to config
 uint8 maxDiff = 7;
 std::ostringstream ss;
