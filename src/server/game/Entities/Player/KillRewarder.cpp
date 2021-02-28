@@ -200,7 +200,7 @@ void KillRewarder::_RewardPlayer(Player* player, bool isDungeon)
         float const rate = 1.0f;
         if(player->GetBoostedXP() <= 1)
         {
-            float const rate = _group ?
+            [[maybe_unused]]float const rate = _group ?
                 _groupRate * float(player->GetLevel()) / _sumLevel :// Group rate depends on summary level.
                 1.0f;// Personal rate is 100%.
         }                                              
