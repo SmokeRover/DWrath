@@ -547,6 +547,7 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
     BroadcastGroupUpdate();
 
     Player* player = ObjectAccessor::FindConnectedPlayer(guid);
+
     sScriptMgr->OnGroupRemoveMember(this, guid, method, kicker, reason);
 
     if (player)
@@ -604,9 +605,6 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
 
             _homebindIfInstance(player);
         }
-
-        //DWrath EDIT
-        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
 
         // Remove player from group in DB
         if (!isBGGroup() && !isBFGroup())
@@ -681,6 +679,8 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
         if (m_memberMgr.getSize() < ((isLFGGroup() || isBGGroup()) ? 1u : 2u))
             Disband();
 
+        //DWrath EDIT. Must execute here or leaving the party under different circumstances crashes the worldserver
+        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
         return true;
     }
     // If group size before player removal <= 2 then disband it
