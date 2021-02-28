@@ -197,17 +197,13 @@ void KillRewarder::_RewardPlayer(Player* player, bool isDungeon)
     if (!_isPvP || _isBattleGround)
     {
         //DWrath EDIT
-        float const rate = 0.0f;
-        if(player->GetBoostedXP() > 1 && rate == 1.0f)
-        {
-            float const rate = 1.0f;
-        }
-        else// Otherwise run the default group XP rates
+        float const rate = 1.0f;
+        if(player->GetBoostedXP() <= 1)
         {
             float const rate = _group ?
                 _groupRate * float(player->GetLevel()) / _sumLevel :// Group rate depends on summary level.
                 1.0f;// Personal rate is 100%.
-        }                                                
+        }                                              
         if (_xp)
             // 4.2. Give XP.
             _RewardXP(player, rate);

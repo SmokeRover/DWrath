@@ -151,7 +151,6 @@ public:
             {
                 std::ostringstream ss;
                 ss << "|cff4CFF00InstanceBalance |r is running. Stat Mod: %f Spell Mod: %f";
-                //ChatHandler(Player->GetSession()).SendSysMessage("|cff4CFF00InstanceBalance |r is running. Stat Mod:%f Spell Mod:%f");
                 ChatHandler(Player->GetSession()).PSendSysMessage(ss.str().c_str(), StatMultiplier, SpellStatMultiplier);
             }
         }
@@ -296,7 +295,11 @@ private:
                     ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty);
                 }
                 // Save Player Dungeon Offsets to Database
-                CharacterDatabase.PExecute("REPLACE INTO custom_dwrath_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats) VALUES (%u, %i, %u, %i, %f)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier);
+                // Had to add gltoggle and currentboost to stop them being reset on entering an instance. Dont know why it was happening though
+                QueryResult resulttog = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
+                bool gltoggle = (*resulttog)[0].GetUInt32();
+                int currentboost = player->GetBoostedXP();
+                CharacterDatabase.PExecute("REPLACE INTO custom_dwrath_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats, GroupLevelTog, BoostedXP) VALUES (%u, %i, %u, %i, %f, %b, %i)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier,gltoggle,currentboost);
             }
             else
             {
