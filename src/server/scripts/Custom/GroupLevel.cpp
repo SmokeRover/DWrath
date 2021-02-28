@@ -83,7 +83,7 @@ public:
                 {
                     ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". highestlvl FOR LOOP" << highestlvl; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
                     // CHANGE <= 80 TO WHATEVER THE MAXLEVEL IS SET TO IN THE CONFIG FILES
-                    if (grplvls[j] > highestlvl && !nullptr && grplvls[j] <= 80)
+                    if (grplvls[j] > highestlvl && grplvls[j] <= 80)
                     {
                         ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". IF HIGHEST FOR LOOP" << highestlvl; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
                         highestlvl = grplvls[j];
