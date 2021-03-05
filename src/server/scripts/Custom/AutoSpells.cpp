@@ -218,6 +218,10 @@ private:
                   AddSpell{20719}, // Feline Grace
                   AddSpell{62600}, // Savage Defense
               }},
+              {SPELLFAMILY_WARRIOR,
+              {
+                  AddSpell{750}, // Plate armour
+              }},
          }},
         {50,
          {

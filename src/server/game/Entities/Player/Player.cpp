@@ -23030,8 +23030,89 @@ void Player::LearnDefaultSkills()
             continue;
 
         LearnDefaultSkill(skillId, itr->Rank);
+        /*
+        DWrath EDIT, brute force hack for naga race to learn skills.
+        DBC edits for each skill racemask is required for this to work.
+        This is purely so they actually know the skills when created.
+
+        My guess is that they dont have a default skillset like normal races/classes do.
+        So I need to find where that is and have them learn skills the same way
+            a racial would to avoid using this hack in the future.
+        */
+        uint32 race = GetRace();
+        uint32 plclass = GetClass();
+        if (race == RACE_NAGA)
+        {
+            //SetSkill(98, 0, 300, 300); // common
+            SetSkill(113, 0, 300, 300); // darnassian
+            SetSkill(109, 0, 300, 300); // orcish
+            SetSkill(229, 0, 1, 5); // polearms
+            //SetSkill(790, 0, 1, 5); // naga racials
+            //SetSkill(44, 0, 1, 5); // axes
+            //SetSkill(172, 0, 1, 5); // t-axes
+            //SetSkill(43, 0, 1, 5); // swords
+            //SetSkill(55, 0, 1, 5); // t-swords
+            //SetSkill(54, 0, 1, 5); // maces
+            //SetSkill(160, 0, 1, 5); // t-maces
+            //SetSkill(162, 0, 1, 5); // ???
+            //SetSkill(173, 0, 1, 5); // daggers
+            //SetSkill(136, 0, 1, 5); // staves
+            //SetSkill(183, 0, 1, 5); // ???
+            //SetSkill(118, 0, 1, 5); // ???
+            //SetSkill(98, 0, 300, 300); // common
+            //SetSkill(415, 0, 1, 1); // cloth
+            //SetSkill(414, 0, 1, 1); // leather
+            //SetSkill(413, 0, 1, 1); // mail
+            //SetSkill(293, 0, 1, 1); // plate
+            //SetSkill(95, 0, 1, 5); // ???
+            //SetSkill(433, 0, 1, 1); // Shields
+            int spellsToAdd[1] = {
+                //668, // Common
+                //199, // 2h Mace
+                //197, // 2h Axes
+                //202, // 2h Swords
+                //200, // Polearms
+                5227, // Underwater breath-- undead racial
+                //107, // Block
+                //9116, // Shield
+                //3127, // Parry
+                //8386, // Attacking
+                //264, // Bows
+                //5011, // Crossbows
+                //6233, // Closing
+                //6246, // Closing
+                //21652, // Closing
+                //9078, // Cloth
+                //1180, // Daggers
+                //204, // Defense
+                //16092, // Defensive State (DND)
+                //3050, // Detect
+                //674, // Dual Wield
+                //7266, // Duel
+                //2382, // Generic
+                //9125, // Generic
+                //7267, // Grovel
+                //266, // Guns
+                //668, // Language Common
+                //203, // Unarmed
+                //7355, // Stuck
+                //522, // SPELLDEFENSE (DND)
+                //22027, // Remove Insignia
+                //3365, // Opening
+                //68398, // Opening
+                //61437, // Opening
+                //22810, // Opening - No Text
+                //21651, // Opening
+                //6478, // Opening
+                //6477, // Opening
+                //6247 // Opening
+            };
+            for (int i = 0; i < 1; ++i)
+                AddSpell(spellsToAdd[i], true, true, true, false);
+
+        }
     }
-}
+};
 
 void Player::LearnDefaultSkill(uint32 skillId, uint16 rank)
 {
