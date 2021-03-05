@@ -23040,7 +23040,7 @@ void Player::LearnDefaultSkills()
             a racial would to avoid using this hack in the future.
         */
         uint32 race = GetRace();
-        uint32 plclass = GetClass();
+        //uint32 plclass = GetClass();
         if (race == RACE_NAGA)
         {
             //SetSkill(98, 0, 300, 300); // common
