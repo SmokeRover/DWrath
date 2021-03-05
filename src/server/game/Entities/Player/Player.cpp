@@ -4760,6 +4760,14 @@ Corpse* Player::CreateCorpse()
     if (!GetMap()->IsBattlegroundOrArena())
         corpse->SaveToDB();
 
+    //DWrath EDIT. Gets and sets values in the database when the player dies
+    //  this is for the DeathstoneScript
+    int cMapId = this->GetCorpseLocation().GetMapId();
+    float c_x = this->GetCorpseLocation().GetPositionX();
+    float c_y = this->GetCorpseLocation().GetPositionY();
+    float c_z = this->GetCorpseLocation().GetPositionZ();
+    CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET d_map = %i, d_x = %f, d_y = %f, d_z = %f WHERE GUID = %u", cMapId, c_x, c_y, c_z, this->GetGUID());
+
     return corpse;
 }
 
@@ -17206,6 +17214,7 @@ bool Player::LoadFromDB(ObjectGuid guid, CharacterDatabaseQueryHolder const& hol
     Field* fields = result->Fetch();
 
     uint32 dbAccountId = fields[1].GetUInt32();
+
 
     // check if the character's account in the db and the logged in account match.
     // player should be able to load/delete character only with correct account!

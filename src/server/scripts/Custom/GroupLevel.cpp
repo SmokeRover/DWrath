@@ -52,7 +52,7 @@ public:
         ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Removed Boost.";ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());ss.str("");
     }
 
-    void OnCheckGLStatus(Group* group, ObjectGuid guid, Player* player) override
+    void OnCheckGLStatus(Group* group, ObjectGuid /*guid*/, Player* player) override
     {
         //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". UPDATE CHECKED."; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
         GetGroupLevels(group, player);

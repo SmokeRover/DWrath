@@ -20,6 +20,7 @@ void AddMicroLFGScripts();
 void AddAutoSpellsScripts();
 void AddSC_InstanceBalance();
 void Add_GroupLevel();
+void Add_DeathstoneScript();
 
 // The name of this function should match:
 // void Add${NameOfDirectory}Scripts()
@@ -29,4 +30,5 @@ void AddCustomScripts()
     AddAutoSpellsScripts();
     AddSC_InstanceBalance();
     Add_GroupLevel();
+    Add_DeathstoneScript();
 }
