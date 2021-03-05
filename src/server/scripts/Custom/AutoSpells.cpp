@@ -35,13 +35,14 @@ public:
             {
                 ChatHandler(player->GetSession()).SendSysMessage("|cff4CFF00Auto Spells |r is running.");
             }
-            if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
+            // Moved directly to player.cpp     void Player::LearnDefaultSkills()
+            /*if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
             {
                 if (player->GetLevel() >= 1)
                 {
                     player->LearnSpell(11305, false, 0); //learn sprint rank 3
                 }
-            }
+            }*/
             
         }
 

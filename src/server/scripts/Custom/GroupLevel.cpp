@@ -14,6 +14,11 @@ Will find players with a level difference greater than 7 when compared to the hi
 // Need logic for 2 man group, higher level member leaves group. Boosted lower player boost does not reset.
 //  find a way to detect when group status has changed for all players in group.
 
+// ABOVE ARE SOLVED, SHOULD REMOVE OnAddMember, OnRemoveMember yaddayadda
+// Only leave the hook in group update from Player.cpp and the GetPlayerLevel function
+// Should find a way to avoid constant for looping every 5 seconds, seems kinda shitty
+// Would also help avoid flooding chat with garbage every tick
+
 #include "Config.h"
 #include "ScriptMgr.h"
 #include "Player.h"
@@ -47,15 +52,21 @@ public:
         ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Removed Boost.";ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str());ss.str("");
     }
 
+    void OnCheckGLStatus(Group* group, ObjectGuid guid, Player* player) override
+    {
+        //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". UPDATE CHECKED."; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
+        GetGroupLevels(group, player);
+    }
+
 
         //Checks if player is toggled, in a group, iterates the group, for loops each member
         //  Finds highest level and uses them as booster.
     void GetGroupLevels(Group* group, Player* player)
     {
         QueryResult result = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
-        CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET BoostedXP = 1 WHERE GUID = %u", player->GetGUID());
+        /*CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET BoostedXP = 1 WHERE GUID = %u", player->GetGUID());
         player->SetBoostedXP(1);
-
+        */
         bool gltoggle = (*result)[0].GetUInt32();
         if ((gltoggle == true))
         {
@@ -67,6 +78,7 @@ public:
                 Group::MemberSlotList const& groupMembers = group->GetMemberSlots();
                 numInGroup = groupMembers.size();
             }
+
             if (numInGroup > 1)
             {
                 //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". IN GROUP"; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
@@ -75,9 +87,16 @@ public:
                 GroupReference* itr = group->GetFirstMember(); // Gets first player in group and then iterates through the rest.
                 for(int i = 0; i < numInGroup; i++)
                 {
-                    grplvls[i] = itr->GetSource()->GetLevel();
-                    itr = itr->next();
-                    //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". grplvls FOR LOOP" << grplvls[i]; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
+                    // If there is no accessible member next EG. Player is offline
+                    if (!itr->next()){
+                        grplvls[i] = itr->GetSource()->GetLevel();
+                    }
+                    else
+                    {
+                        grplvls[i] = itr->GetSource()->GetLevel();
+                        itr = itr->next();
+                        //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". grplvls FOR LOOP" << grplvls[i]; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
+                    }
                 }
 
                 int highestlvl = grplvls[0];
@@ -94,7 +113,7 @@ public:
 
                 if (highestlvl >= (player->GetLevel() + maxDiff)) // highestlvl is memberLvl
                 {
-                    ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Boosting with level " << highestlvl << "."; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
+                    //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Boosting with level " << highestlvl << "."; ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str()); ss.str("");
                     modifyExperience(player, highestlvl);
                 }
                 else
@@ -129,7 +148,7 @@ public:
     {
         CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET BoostedXP = %i WHERE GUID = %u", boostedXP, player->GetGUID());
         player->SetBoostedXP(boostedXP);
-        ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Boost rate = %i .";ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), boostedXP);ss.str("");
+        //ss << "|cffFF0000[GroupLevel] |cffFF8000" << player->GetName() << ". Boost rate = %i .";ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), boostedXP);ss.str("");
     }
 };
 
@@ -199,10 +218,10 @@ public:
     }
 };
 
-class grouplevel_levelup : public PlayerScript
+class grouplevel_update : public PlayerScript
 {
 public:
-    grouplevel_levelup() : PlayerScript("grouplevel_levelup"){}
+    grouplevel_update() : PlayerScript("grouplevel_update"){}
     // Runs when the players level changes + or -
     void OnLevelChanged(Player* player, uint8 /*oldlvl*/) override
     {
@@ -253,6 +272,6 @@ void Add_GroupLevel()
 {
     new grouplevel_handler();
     new grouplevel_commands();
-    new grouplevel_levelup();
+    new grouplevel_update();
     new grouplevel_login();
 }

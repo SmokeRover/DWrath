@@ -2079,6 +2079,11 @@ void ScriptMgr::OnGroupAddMemberGL(Group* group, ObjectGuid guid, Player* player
     ASSERT(group);
     FOREACH_SCRIPT(GroupScript)->OnAddMemberGL(group, guid, player);
 }
+// DWrath EDIT.
+void ScriptMgr::CheckGLStatus(Group* group, ObjectGuid guid, Player* player)
+{
+    FOREACH_SCRIPT(GroupScript)->OnCheckGLStatus(group, guid, player);
+}
 
 void ScriptMgr::OnGroupInviteMember(Group* group, ObjectGuid guid)
 {

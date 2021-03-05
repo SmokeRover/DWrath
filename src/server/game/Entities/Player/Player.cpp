@@ -102,6 +102,8 @@
 #include "WorldPacket.h"
 #include "WorldSession.h"
 #include "WorldStatePackets.h"
+//DWrath EDIT
+#include "Configuration/Config.h"
 
 #define ZONE_UPDATE_INTERVAL (1*IN_MILLISECONDS)
 
@@ -1331,6 +1333,9 @@ void Player::Update(uint32 p_time)
     {
         SendUpdateToOutOfRangeGroupMembers();
         m_groupUpdateTimer.Reset(5000);
+        //DWrath EDIT. Kinda junky but hoping this will trigger an update to the GroupLevel state
+        //  after a member leaves or whatever
+        sScriptMgr->CheckGLStatus(this->GetGroup(), this->GetGUID(), this);
     }
 
     Pet* pet = GetPet();
@@ -23029,6 +23034,7 @@ void Player::LearnDefaultSkills()
         if (HasSkill(skillId))
             continue;
 
+
         LearnDefaultSkill(skillId, itr->Rank);
         /*
         DWrath EDIT, brute force hack for naga race to learn skills.
@@ -23039,6 +23045,10 @@ void Player::LearnDefaultSkills()
         So I need to find where that is and have them learn skills the same way
             a racial would to avoid using this hack in the future.
         */
+        if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
+        {
+            AddSpell(11305, true, true, false, false); // sprint rank 3
+        }
         uint32 race = GetRace();
         //uint32 plclass = GetClass();
         if (race == RACE_NAGA)
@@ -23066,13 +23076,16 @@ void Player::LearnDefaultSkills()
             //SetSkill(293, 0, 1, 1); // plate
             //SetSkill(95, 0, 1, 5); // ???
             //SetSkill(433, 0, 1, 1); // Shields
-            int spellsToAdd[1] = {
+
+            //Brute forces some spells to act as """"racials""""
+            int spellsToAdd[2] = {
                 //668, // Common
                 //199, // 2h Mace
                 //197, // 2h Axes
                 //202, // 2h Swords
                 //200, // Polearms
                 5227, // Underwater breath-- undead racial
+                40571, // Swim Speed-- 100% swim speed increase for 10 sec
                 //107, // Block
                 //9116, // Shield
                 //3127, // Parry
@@ -23107,8 +23120,8 @@ void Player::LearnDefaultSkills()
                 //6477, // Opening
                 //6247 // Opening
             };
-            for (int i = 0; i < 1; ++i)
-                AddSpell(spellsToAdd[i], true, true, true, false);
+            for (int i = 0; i < 2; ++i)
+                AddSpell(spellsToAdd[i], true, true, false, false);
 
         }
     }

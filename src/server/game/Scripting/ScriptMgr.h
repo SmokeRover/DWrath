@@ -815,6 +815,8 @@ class TC_GAME_API GroupScript : public ScriptObject
 
         // DWrath EDIT, virtual void call for clone of OnAddMember
         virtual void OnAddMemberGL(Group* /*group*/, ObjectGuid /*guid*/, Player* /*player*/){ }
+        virtual void OnCheckGLStatus(Group* /*group*/, ObjectGuid /*guid*/, Player* /*player*/){ }
+
 
         // Called when a member is invited to join a group.
         virtual void OnInviteMember(Group* /*group*/, ObjectGuid /*guid*/) { }
@@ -1084,6 +1086,8 @@ class TC_GAME_API ScriptMgr
         void OnGroupAddMember(Group* group, ObjectGuid guid);
         // DWrath EDIT, function call for clone of OnGroupAddMember
         void OnGroupAddMemberGL(Group* group, ObjectGuid guid, Player* player);
+        void CheckGLStatus(Group* group, ObjectGuid guid, Player* player);
+
         void OnGroupInviteMember(Group* group, ObjectGuid guid);
         void OnGroupRemoveMember(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason);
         // DWrath EDIT, function call for clone of OnGroupRemoveMember
