@@ -23057,6 +23057,7 @@ void Player::LearnDefaultSkills()
         if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
         {
             AddSpell(11305, true, true, false, false); // sprint rank 3
+            AddItem(90000, 1); // deathstone
         }
         uint32 race = GetRace();
         //uint32 plclass = GetClass();

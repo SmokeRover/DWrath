@@ -12,6 +12,11 @@ Need to make the script execute. Probably need to create a spell
 that sucks
 */
 
+//Cloned the hearthstone in item_template-- item 90000
+//Set spellID 7077--Simple Teleport
+//Changed name
+//Now added item to Item.dbc and changed values to what I want
+
 class deathstone_script : public ItemScript
 {
 public:
@@ -19,7 +24,7 @@ public:
 
     bool OnUse(Player* player, Item* /*item*/, SpellCastTargets const& /*targets*/) override
     {
-        QueryResult result = CharacterDatabase.PQuery("SELECT `d_map` `d_x` `d_y` `d_z` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
+        QueryResult result = CharacterDatabase.PQuery("SELECT d_map, d_x, d_y, d_z FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
         int d_map = (*result)[0].GetUInt32();
         float d_x = (*result)[1].GetFloat();
         float d_y = (*result)[2].GetFloat();
@@ -28,13 +33,13 @@ public:
         if (d_map != -1) {
             player->TeleportTo(d_map, d_x, d_y, d_z, 0);
             CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET d_map = -1 WHERE GUID = %u", player->GetGUID());
-            ssss << "|cffFF0000[DEATHSTONE] |cffFF8000" << player->GetName() << ". d_map is -1"; ChatHandler(player->GetSession()).PSendSysMessage(ssss.str().c_str()); ssss.str("");
+            ssss << "|cffFF0000[Deathstone] |cffFF8000" << player->GetName() << ". Teleported to place of death."; ChatHandler(player->GetSession()).PSendSysMessage(ssss.str().c_str()); ssss.str("");
 
             return true;
         }
         else
         {
-            ssss << "|cffFF0000[DEATHSTONE] |cffFF8000" << player->GetName() << ". d_map is something"; ChatHandler(player->GetSession()).PSendSysMessage(ssss.str().c_str()); ssss.str("");
+            ssss << "|cffFF0000[Deathstone] |cffFF8000" << player->GetName() << ". Nah m8."; ChatHandler(player->GetSession()).PSendSysMessage(ssss.str().c_str()); ssss.str("");
             return false;
         }
     }
