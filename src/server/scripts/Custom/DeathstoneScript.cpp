@@ -17,7 +17,7 @@ class deathstone_script : public ItemScript
 public:
     deathstone_script() : ItemScript("deathstone_script") { }
 
-    bool OnUse(Player* player, Item* /*item*/, SpellCastTargets const& targets) override
+    bool OnUse(Player* player, Item* /*item*/, SpellCastTargets const& /*targets*/) override
     {
         QueryResult result = CharacterDatabase.PQuery("SELECT `d_map` `d_x` `d_y` `d_z` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
         int d_map = (*result)[0].GetUInt32();
