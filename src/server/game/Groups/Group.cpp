@@ -457,9 +457,6 @@ bool Group::AddMember(Player* player)
     }
 
     SendUpdate();
-    // DWrath EDIT, This is here for GroupLevel, I couldnt figure out a way to execute the script otherwise.
-    // Just piggybacks off the Group class to make my script run with the extra bits.
-    sScriptMgr->OnGroupAddMemberGL(this, player->GetGUID(), player);
 
     sScriptMgr->OnGroupAddMember(this, player->GetGUID());
 
@@ -679,16 +676,12 @@ bool Group::RemoveMember(ObjectGuid guid, RemoveMethod const& method /*= GROUP_R
         if (m_memberMgr.getSize() < ((isLFGGroup() || isBGGroup()) ? 1u : 2u))
             Disband();
 
-        //DWrath EDIT. Must execute here or leaving the party under different circumstances crashes the worldserver
-        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
         return true;
     }
     // If group size before player removal <= 2 then disband it
     else
     {
         Disband();
-        //DWrath EDIT. Runs after disband to disable boost when party disbands
-        sScriptMgr->OnGroupRemoveMemberGL(this, guid, method, kicker, reason, player);
         return false;
     }
 }

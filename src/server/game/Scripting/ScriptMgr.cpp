@@ -2073,12 +2073,6 @@ void ScriptMgr::OnGroupAddMember(Group* group, ObjectGuid guid)
     FOREACH_SCRIPT(GroupScript)->OnAddMember(group, guid);
 }
 
-// DWrath EDIT, direct copy of OnGroupAddMember, purely so I don't have to interfere with too many additional files
-void ScriptMgr::OnGroupAddMemberGL(Group* group, ObjectGuid guid, Player* player)
-{
-    ASSERT(group);
-    FOREACH_SCRIPT(GroupScript)->OnAddMemberGL(group, guid, player);
-}
 // DWrath EDIT.
 void ScriptMgr::CheckGLStatus(Group* group, ObjectGuid guid, Player* player)
 {
@@ -2095,12 +2089,6 @@ void ScriptMgr::OnGroupRemoveMember(Group* group, ObjectGuid guid, RemoveMethod 
 {
     ASSERT(group);
     FOREACH_SCRIPT(GroupScript)->OnRemoveMember(group, guid, method, kicker, reason);
-}
-// DWrath EDIT, a
-void ScriptMgr::OnGroupRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player)
-{
-    ASSERT(group);
-    FOREACH_SCRIPT(GroupScript)->OnRemoveMemberGL(group, guid, method, kicker, reason, player);
 }
 
 void ScriptMgr::OnGroupChangeLeader(Group* group, ObjectGuid newLeaderGuid, ObjectGuid oldLeaderGuid)

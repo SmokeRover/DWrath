@@ -813,8 +813,7 @@ class TC_GAME_API GroupScript : public ScriptObject
         // Called when a member is added to a group.
         virtual void OnAddMember(Group* /*group*/, ObjectGuid /*guid*/) { }
 
-        // DWrath EDIT, virtual void call for clone of OnAddMember
-        virtual void OnAddMemberGL(Group* /*group*/, ObjectGuid /*guid*/, Player* /*player*/){ }
+        //DWrath EDIT, end all be all
         virtual void OnCheckGLStatus(Group* /*group*/, ObjectGuid /*guid*/, Player* /*player*/){ }
 
 
@@ -823,9 +822,6 @@ class TC_GAME_API GroupScript : public ScriptObject
 
         // Called when a member is removed from a group.
         virtual void OnRemoveMember(Group* /*group*/, ObjectGuid /*guid*/, RemoveMethod /*method*/, ObjectGuid /*kicker*/, char const* /*reason*/) { }
-
-        // DWrath EDIT, virtal void call for clone of OnRemoveMember
-        virtual void OnRemoveMemberGL(Group* /*group*/, ObjectGuid /*guid*/, RemoveMethod /*method*/, ObjectGuid /*kicker*/, char const* /*reason*/, Player* /*player*/) { }
 
         // Called when the leader of a group is changed.
         virtual void OnChangeLeader(Group* /*group*/, ObjectGuid /*newLeaderGuid*/, ObjectGuid /*oldLeaderGuid*/) { }
@@ -1084,14 +1080,11 @@ class TC_GAME_API ScriptMgr
     public: /* GroupScript */
 
         void OnGroupAddMember(Group* group, ObjectGuid guid);
-        // DWrath EDIT, function call for clone of OnGroupAddMember
-        void OnGroupAddMemberGL(Group* group, ObjectGuid guid, Player* player);
+        // DWrath EDIT, end all be all script execution
         void CheckGLStatus(Group* group, ObjectGuid guid, Player* player);
 
         void OnGroupInviteMember(Group* group, ObjectGuid guid);
         void OnGroupRemoveMember(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason);
-        // DWrath EDIT, function call for clone of OnGroupRemoveMember
-        void OnGroupRemoveMemberGL(Group* group, ObjectGuid guid, RemoveMethod method, ObjectGuid kicker, char const* reason, Player* player);
         void OnGroupChangeLeader(Group* group, ObjectGuid newLeaderGuid, ObjectGuid oldLeaderGuid);
         void OnGroupDisband(Group* group);
 
