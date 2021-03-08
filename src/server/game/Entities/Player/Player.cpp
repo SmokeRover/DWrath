@@ -23057,10 +23057,19 @@ void Player::LearnDefaultSkills()
         if (sConfigMgr->GetBoolDefault("LearnSpells.LearnSprint", true))
         {
             AddSpell(11305, true, true, false, false); // sprint rank 3
+            // tries to give player a deathstone even if they have one every login
+            // gets sent to mailbox but needs a better solution
             AddItem(90000, 1); // deathstone
         }
         uint32 race = GetRace();
-        //uint32 plclass = GetClass();
+        uint32 plclass = GetClass();
+        if (plclass == CLASS_PALADIN)
+        {
+            SetSkill(44, 0, 1, 5); // axes
+            SetSkill(172, 0, 1, 5); // t-axes
+            SetSkill(43, 0, 1, 5); // swords
+            SetSkill(160, 0, 1, 5); // t-maces
+        }
         if (race == RACE_NAGA)
         {
             //SetSkill(98, 0, 300, 300); // common
@@ -23073,7 +23082,7 @@ void Player::LearnDefaultSkills()
             //SetSkill(43, 0, 1, 5); // swords
             //SetSkill(55, 0, 1, 5); // t-swords
             //SetSkill(54, 0, 1, 5); // maces
-            //SetSkill(160, 0, 1, 5); // t-maces
+            SetSkill(160, 0, 1, 5); // t-maces
             //SetSkill(162, 0, 1, 5); // ???
             //SetSkill(173, 0, 1, 5); // daggers
             //SetSkill(136, 0, 1, 5); // staves
@@ -23086,6 +23095,12 @@ void Player::LearnDefaultSkills()
             //SetSkill(293, 0, 1, 1); // plate
             //SetSkill(95, 0, 1, 5); // ???
             //SetSkill(433, 0, 1, 1); // Shields
+            if(plclass == CLASS_HUNTER)
+            {
+                SetSkill(45, 0, 1, 5); // bows
+                SetSkill(226, 0, 1, 5); // crossbows
+                SetSkill(46, 0, 1, 5); // guns
+            }
 
             //Brute forces some spells to act as """"racials""""
             int spellsToAdd[2] = {

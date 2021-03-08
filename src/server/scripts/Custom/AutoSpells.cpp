@@ -63,7 +63,7 @@ public:
             }
             if (sConfigMgr->GetBoolDefault("LearnSpells.LearnPortals", true))
             {
-                player->AddItem(17031, 10);
+                player->AddItem(17031, 2);
                 switch (player->GetTeamId())
                 {
                 case TEAM_ALLIANCE:

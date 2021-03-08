@@ -33,10 +33,7 @@ int LevelDiff = 10;
 // Add alternate ApplyBuff for different raid tiers, or add math solution that takes tiers into consideration.
 
 // Player stats may set to 0 if they log out in a dungeon and are removed outside the instance.
-// Seems like the game might consider the outside map as an instance if it tries loading the instance
-// map but opts to remove the player afterwards.
-
-// Never mind the druid crap, im dumb
+// Seems like the game might consider the outside map as an instance if it tries loading the instance map first
 
 class InstanceBalanceConfig : public WorldScript
 {
@@ -295,11 +292,8 @@ private:
                     ChatHandler(player->GetSession()).PSendSysMessage(ss.str().c_str(), map->GetMapName(), difficulty);
                 }
                 // Save Player Dungeon Offsets to Database
-                // Had to add gltoggle and currentboost to stop them being reset on entering an instance. Dont know why it was happening though
-                QueryResult resulttog = CharacterDatabase.PQuery("SELECT `GroupLevelTog` FROM `custom_dwrath_character_stats` WHERE GUID = %u", player->GetGUID());
-                bool gltoggle = (*resulttog)[0].GetUInt32();
-                int currentboost = player->GetBoostedXP();
-                CharacterDatabase.PExecute("REPLACE INTO custom_dwrath_character_stats (GUID, Difficulty, GroupSize, SpellPower, Stats, GroupLevelTog, BoostedXP) VALUES (%u, %i, %u, %i, %f, %b, %i)", player->GetGUID(), difficulty, numInGroup, SpellPowerBonus, StatMultiplier,gltoggle,currentboost);
+                // Had REPLACE INTO instead of UPDATE, replace into deletes the row before writing new info which buggered up things
+                CharacterDatabase.PExecute("UPDATE custom_dwrath_character_stats SET Difficulty = %i, GroupSize = %u, SpellPower = %i, Stats = %f WHERE GUID = %u", difficulty, numInGroup, SpellPowerBonus, StatMultiplier, player->GetGUID());
             }
             else
             {

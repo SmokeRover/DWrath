@@ -8,8 +8,7 @@ std::ostringstream ssss;
 /*
 Like a hearthstone but for when you died and wanna get back quick
 
-Need to make the script execute. Probably need to create a spell
-that sucks
+@todo Need to give players this item in a better way, currently tries to give to player each login
 */
 
 //Cloned the hearthstone in item_template-- item 90000
