@@ -1512,6 +1512,16 @@ bool Player::BuildEnumData(PreparedQueryResult result, WorldPacket* data)
 
     *data << uint32(charFlags);                             // character flags
 
+    //DWrath edit
+    QueryResult chkatlogin = CharacterDatabase.PQuery("SELECT `at_login` FROM `characters` WHERE GUID = %u", guid);
+    //DWrath edit
+    if ((*chkatlogin)[0].GetUInt32() == 0)
+    {
+        //DWrath edit, testing to see if this always triggers a race change at login
+        CharacterDatabase.PExecute("UPDATE characters SET at_login = %i WHERE GUID = %u", AT_LOGIN_CHANGE_RACE, guid);
+        //*data << uint32(CHAR_CUSTOMIZE_FLAG_RACE);
+    }
+
     // character customize flags
     if (atLoginFlags & AT_LOGIN_CUSTOMIZE)
         *data << uint32(CHAR_CUSTOMIZE_FLAG_CUSTOMIZE);
